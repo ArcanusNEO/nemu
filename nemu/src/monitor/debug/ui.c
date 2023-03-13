@@ -72,7 +72,8 @@ static int cmd_si(char* args) {
 
 static int cmd_info(char* args) {
   char* subcmd = strtok(NULL, " ");
-  if (subcmd == NULL || *subcmd == '\0') goto L_CMD_INFO_UNKNOWN;
+  if (subcmd == NULL || *subcmd == '\0' || *(subcmd + 1) != '\0')
+    goto L_CMD_INFO_UNKNOWN;
   switch (*subcmd) {
     case 'r' :
       printf("eax\t0x%x\n", cpu.eax);
