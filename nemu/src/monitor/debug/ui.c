@@ -68,7 +68,21 @@ static struct {
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
 
 static int cmd_x(char* args) {
+  char* nstr = strtok(NULL, " ");
+  if (nstr == NULL) goto L_CMD_X_USAGE;
+  int n = atoi(nstr);
+
+  char* expr = strtok(NULL, " ");
+  if (expr == NULL) goto L_CMD_X_USAGE;
+  uint32_t addr;
+  sscanf(expr, "%x", &addr);
+
+  printf("x %d 0x%x\n", n, addr);
   return 0;
+
+L_CMD_X_USAGE:
+  puts("Usage: x N HEX");
+  return 1;
 }
 
 static int cmd_si(char* args) {
