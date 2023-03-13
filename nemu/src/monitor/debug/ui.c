@@ -79,7 +79,7 @@ static int cmd_x(char* args) {
 
   // printf("x %d 0x%x\n", n, addr);
   for (int i = 0; i < n; ++i) {
-    printf("0x%8x: 0x%8x 0x%8x 0x%8x 0x%8x\n", addr, vaddr_read(addr, 4),
+    printf("0x%08x: 0x%08x 0x%08x 0x%08x 0x%08x\n", addr, vaddr_read(addr, 4),
       vaddr_read(addr + 4, 4), vaddr_read(addr + 8, 4),
       vaddr_read(addr + 12, 4));
     addr += 16;
