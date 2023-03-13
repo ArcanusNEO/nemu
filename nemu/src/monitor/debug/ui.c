@@ -71,15 +71,22 @@ static int cmd_si(char* args) {
 }
 
 static int cmd_info(char* args) {
-  printf("eax\t0x%x\n", cpu.eax);
-  printf("ecx\t0x%x\n", cpu.ecx);
-  printf("edx\t0x%x\n", cpu.edx);
-  printf("ebx\t0x%x\n", cpu.ebx);
-  printf("esp\t0x%x\n", cpu.esp);
-  printf("ebp\t0x%x\n", cpu.ebp);
-  printf("esi\t0x%x\n", cpu.esi);
-  printf("edi\t0x%x\n", cpu.edi);
-  printf("eip\t0x%x\n", cpu.eip);
+  char* subcmd = strtok(NULL, " ");
+  switch (*subcmd) {
+    case 'r' :
+      printf("eax\t0x%x\n", cpu.eax);
+      printf("ecx\t0x%x\n", cpu.ecx);
+      printf("edx\t0x%x\n", cpu.edx);
+      printf("ebx\t0x%x\n", cpu.ebx);
+      printf("esp\t0x%x\n", cpu.esp);
+      printf("ebp\t0x%x\n", cpu.ebp);
+      printf("esi\t0x%x\n", cpu.esi);
+      printf("edi\t0x%x\n", cpu.edi);
+      printf("eip\t0x%x\n", cpu.eip);
+      break;
+    case 'w' : break;
+    default : printf("Unknown sub-command '%s'\n", subcmd); break;
+  }
   return 0;
 }
 
