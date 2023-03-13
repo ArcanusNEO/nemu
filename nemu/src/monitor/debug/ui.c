@@ -62,13 +62,13 @@ static struct {
   {   "q",                                                                                                                             "Exit NEMU",    cmd_q},
 
  /* TODO: Add more commands */
+  { "cls",                                                                                                                          "Clear screen",  cmd_cls},
   {  "si",                                                                       "Pause program execution after N instructions have been executed",
    cmd_si                                                                                                                                                   },
   {"info",                                                                                                               "Print the program state", cmd_info},
   {   "x",
    "Calculate the value of the expression \"EXPR\" and output N continuous 4-byte memory addresses in hexadecimal format starting from the result",
    cmd_x                                                                                                                                                    },
-  { "cls",                                                                                                                          "Clear screen",  cmd_cls},
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
