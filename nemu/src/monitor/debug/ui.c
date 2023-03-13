@@ -88,9 +88,10 @@ static int cmd_info(char* args) {
     case 'w' : break;
     default : goto L_CMD_INFO_UNKNOWN;
   }
+  return 0;
 L_CMD_INFO_UNKNOWN:
   printf("Unknown sub-command '%s'\n", subcmd);
-  return 0;
+  return 1;
 }
 
 static int cmd_help(char* args) {
