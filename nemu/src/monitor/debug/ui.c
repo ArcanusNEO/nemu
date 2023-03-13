@@ -48,7 +48,7 @@ static int cmd_info(char* args);
 static int cmd_x(char* args);
 
 static int cmd_cls(char* args) {
-  printf("\e[1;1H\e[2J");
+  printf("\033c");
   return 0;
 }
 
