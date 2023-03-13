@@ -16,6 +16,16 @@ enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
+#define travel_reg(pre, post) \
+  pre eax post \
+  pre ecx post \
+  pre edx post \
+  pre ebx post \
+  pre esp post \
+  pre ebp post \
+  pre esi post \
+  pre edi post 
+
 typedef struct {
   union {
     union {
@@ -29,14 +39,7 @@ typedef struct {
    * in PA2 able to directly access these registers.
    */
     struct {
-      rtlreg_t eax;
-      rtlreg_t ecx;
-      rtlreg_t edx;
-      rtlreg_t ebx;
-      rtlreg_t esp;
-      rtlreg_t ebp;
-      rtlreg_t esi;
-      rtlreg_t edi;
+      travel_reg(rtlreg_t, ;);
     };
   };
 
