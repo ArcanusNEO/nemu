@@ -72,7 +72,7 @@ static int cmd_si(char* args) {
 
 static int cmd_info(char* args) {
   char* subcmd = strtok(NULL, " ");
-  if (subcmd == NULL || *subcmd == '\0') return 0;
+  if (subcmd == NULL || *subcmd == '\0') goto L_CMD_INFO_UNKNOWN;
   switch (*subcmd) {
     case 'r' :
       printf("eax\t0x%x\n", cpu.eax);
@@ -86,8 +86,10 @@ static int cmd_info(char* args) {
       printf("eip\t0x%x\n", cpu.eip);
       break;
     case 'w' : break;
-    default : printf("Unknown sub-command '%s'\n", subcmd); break;
+    default : goto L_CMD_INFO_UNKNOWN;
   }
+L_CMD_INFO_UNKNOWN:
+  printf("Unknown sub-command '%s'\n", subcmd);
   return 0;
 }
 
