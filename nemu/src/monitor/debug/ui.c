@@ -71,7 +71,7 @@ static int cmd_si(char* args) {
 }
 
 static int cmd_info(char* args) {
-  printf("eax\t0x%x", cpu.eax);
+  printf("eax\t0x%x\n", cpu.eax);
   return 0;
 }
 
