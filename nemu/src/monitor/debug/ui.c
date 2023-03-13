@@ -74,10 +74,16 @@ static int cmd_x(char* args) {
 
   char* expr = strtok(NULL, " ");
   if (expr == NULL) goto L_CMD_X_USAGE;
-  uint32_t addr;
+  vaddr_t addr;
   sscanf(expr, "%x", &addr);
 
-  printf("x %d 0x%x\n", n, addr);
+  // printf("x %d 0x%x\n", n, addr);
+  for (int i = 0; i < n; ++i) {
+    printf("0x%x: 0x%x 0x%x 0x%x 0x%x\n", addr, vaddr_read(addr, 4),
+      vaddr_read(addr + 4, 4), vaddr_read(addr + 8, 4),
+      vaddr_read(addr + 12, 4));
+    addr += 16;
+  }
   return 0;
 
 L_CMD_X_USAGE:
