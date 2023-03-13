@@ -48,13 +48,13 @@ static struct {
   char* description;
   int (*handler)(char*);
 } cmd_table[] = {
-  {"help",      "Display informations about all supported commands", cmd_help          },
-  {   "c",                            "Continue the execution of the program",    cmd_c},
-  {   "q",                                                        "Exit NEMU",    cmd_q},
+  {"help",                  "Display informations about all supported commands",cmd_help                                                                                },
+  {   "c",                              "Continue the execution of the program",    cmd_c},
+  {   "q",                                                          "Exit NEMU",    cmd_q},
 
  /* TODO: Add more commands */
-  {  "si",
-   "Let the program be executed after N instructions is executed single step",   cmd_si},
+  {  "si", "Pause program execution after N instructions have been executed",
+   cmd_si                                                                                },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
