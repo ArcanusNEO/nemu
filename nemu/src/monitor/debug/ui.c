@@ -45,22 +45,31 @@ static int cmd_si(char* args);
 
 static int cmd_info(char* args);
 
+static int cmd_x(char* args);
+
 static struct {
   char* name;
   char* description;
   int (*handler)(char*);
 } cmd_table[] = {
-  {"help",               "Display informations about all supported commands",cmd_help                                                                             },
-  {   "c",                           "Continue the execution of the program",    cmd_c},
-  {   "q",                                                       "Exit NEMU",    cmd_q},
+  {"help",                                                                           "Display informations about all supported commands",cmd_help                                                                                                                                                   },
+  {   "c",                                                                                                 "Continue the execution of the program",    cmd_c},
+  {   "q",                                                                                                                             "Exit NEMU",    cmd_q},
 
  /* TODO: Add more commands */
-  {  "si", "Pause program execution after N instructions have been executed",
-   cmd_si                                                                             },
-  {"info",                                         "Print the program state", cmd_info},
+  {  "si",                                                                       "Pause program execution after N instructions have been executed",
+   cmd_si                                                                                                                                                   },
+  {"info",                                                                                                               "Print the program state", cmd_info},
+  {   "x",
+   "Calculate the value of the expression \"EXPR\" and output N continuous 4-byte memory addresses in hexadecimal format starting from the result",
+   cmd_x                                                                                                                                                    },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
+
+static int cmd_x(char* args) {
+  return 0;
+}
 
 static int cmd_si(char* args) {
   char* arg = strtok(NULL, " ");
