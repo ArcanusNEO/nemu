@@ -43,18 +43,21 @@ static int cmd_help(char* args);
 
 static int cmd_si(char* args);
 
+static int cmd_info(char* args);
+
 static struct {
   char* name;
   char* description;
   int (*handler)(char*);
 } cmd_table[] = {
-  {"help",                  "Display informations about all supported commands",cmd_help                                                                                },
-  {   "c",                              "Continue the execution of the program",    cmd_c},
-  {   "q",                                                          "Exit NEMU",    cmd_q},
+  {"help",               "Display informations about all supported commands",cmd_help                                                                             },
+  {   "c",                           "Continue the execution of the program",    cmd_c},
+  {   "q",                                                       "Exit NEMU",    cmd_q},
 
  /* TODO: Add more commands */
   {  "si", "Pause program execution after N instructions have been executed",
-   cmd_si                                                                                },
+   cmd_si                                                                             },
+  {"info",                                         "Print the program state", cmd_info},
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
@@ -64,6 +67,11 @@ static int cmd_si(char* args) {
   int n = 1;
   if (arg != NULL) n = atoi(arg);
   cpu_exec(n);
+  return 0;
+}
+
+static int cmd_info(char* args) {
+  printf("eax\t0x%x", cpu.eax);
   return 0;
 }
 
