@@ -47,6 +47,11 @@ static int cmd_info(char* args);
 
 static int cmd_x(char* args);
 
+static int cmd_cls(char* args) {
+  printf("\e[1;1H\e[2J");
+  return 0;
+}
+
 static struct {
   char* name;
   char* description;
@@ -63,6 +68,7 @@ static struct {
   {   "x",
    "Calculate the value of the expression \"EXPR\" and output N continuous 4-byte memory addresses in hexadecimal format starting from the result",
    cmd_x                                                                                                                                                    },
+  { "cls",                                                                                                                          "Clear screen",  cmd_cls},
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
