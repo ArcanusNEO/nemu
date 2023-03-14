@@ -55,7 +55,7 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {            "\\s+", TK_NOTYPE}, // spaces
+  {            " +", TK_NOTYPE}, // spaces
   {            "==",     TK_EQ}, // equal
   {            "!=",   TK_UNEQ}, // unequal
   {        "\\|\\|",    TK_LOR}, // logical or
@@ -69,7 +69,7 @@ static struct rule {
   {           "\\)",       ')'}, // right brace
   {  "\\$[a-zA-Z]+",    TK_REG}, // register
   {"0x[0-9a-fA-F]+",    TK_HEX}, // hexadecimal
-  {        "[0-9]+",    TK_DEC}, // number
+  {        "\\d+",    TK_DEC}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
