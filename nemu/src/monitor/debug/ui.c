@@ -158,8 +158,8 @@ void ui_mainloop(int is_batch_mode) {
 
   while (1) {
     char* str = rl_gets();
+    if (str == NULL) return;
     char* str_end = str + strlen(str);
-    printf("%p\n", str);
 
     /* extract the first token as the command */
     char* cmd = strtok(str, " ");
