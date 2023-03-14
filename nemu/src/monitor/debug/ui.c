@@ -14,6 +14,7 @@ void cpu_exec(uint64_t);
 Call readline and add_history, return the line read
 */
 char* rl_gets() {
+  puts("1");
   static char* line_read = NULL;
 
   if (line_read) {
@@ -159,7 +160,7 @@ void ui_mainloop(int is_batch_mode) {
 
   while (1) {
     char* str = rl_gets();
-    for (int i = 0; str[i]; ++i) printf("%d ", str[i]);
+    // for (int i = 0; str[i]; ++i) printf("%d ", str[i]);
     char* str_end = str + strlen(str);
 
     /* extract the first token as the command */
