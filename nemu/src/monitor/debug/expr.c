@@ -282,8 +282,10 @@ uint32_t expr(char* e, bool* success) {
   for (int i = 0; i < nr_token; ++i) {
     if (token_num(tokens[i]->type)) num_push(tokens[i]);
     else {
+      // + 5
+      // * 4
       while (!op_empty() &&
-        token_priority[op_top()->type] > token_priority[tokens[i]->type]) {
+        token_priority[op_top()->type] < token_priority[tokens[i]->type]) {
         if (post_empty()) post_push(num_pop());
         post_push(num_pop());
         post_push(op_pop());
