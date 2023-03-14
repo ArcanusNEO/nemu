@@ -280,9 +280,9 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('+', TK_POS);
 
   for (int i = 0; i < nr_token; ++i) {
-    // if (token_var(tokens[i]->type)) Log("%s", tokens[i]->str);
-    // else if (tokens[i]->type < 256) Log("%c", tokens[i]->type);
-    // else Log("%d", tokens[i]->type);
+    if (token_var(tokens[i]->type)) Log("%s", tokens[i]->str);
+    else if (tokens[i]->type < 256) Log("%c", tokens[i]->type);
+    else Log("%d", tokens[i]->type);
 
     if (token_var(tokens[i]->type)) var_push(tokens[i]);
     else {
