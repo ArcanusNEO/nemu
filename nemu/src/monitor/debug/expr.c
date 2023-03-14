@@ -3,6 +3,7 @@
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
+#include <inttypes.h>
 #include <regex.h>
 #include <sys/types.h>
 
@@ -258,8 +259,14 @@ stack_code(Token*, post);
 stack_code(int64_t, integer);
 
 int64_t readnum(Token* tk) {
-  TODO();
-  return 0;
+  int64_t ans = 0;
+  switch (tk->type) {
+    case TK_DEC : sscanf(tk->str, "%" SCNd64, &ans); break;
+    case TK_HEX : sscanf(tk->str, "%" SCNx64, &ans); break;
+    case TK_REG : TODO(); break;
+    default : break;
+  }
+  return ans;
 }
 
 uint32_t expr(char* e, bool* success) {
