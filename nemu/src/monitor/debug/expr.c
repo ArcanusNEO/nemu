@@ -55,7 +55,7 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {            "\\s+", TK_NOTYPE}, // spaces
+  {          "\\s+", TK_NOTYPE}, // spaces
   {            "==",     TK_EQ}, // equal
   {            "!=",   TK_UNEQ}, // unequal
   {        "\\|\\|",    TK_LOR}, // logical or
