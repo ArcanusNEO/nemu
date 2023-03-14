@@ -280,7 +280,6 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('+', TK_POS);
 
   for (int i = 0; i < nr_token; ++i) {
-
     if (token_num(tokens[i]->type)) Log("%s", tokens[i]->str);
     else if (tokens[i]->type < 256) Log("%c", tokens[i]->type);
     else Log("%d", tokens[i]->type);
@@ -291,18 +290,30 @@ uint32_t expr(char* e, bool* success) {
       // * 4
       while (!op_empty() &&
         token_priority[op_top()->type] < token_priority[tokens[i]->type]) {
-        if (post_empty() && !token_mono(op_top()->type)) post_push(num_pop());
-        post_push(num_pop());
-        post_push(op_pop());
+        if (post_empty() && !token_mono(op_top()->type)) {
+          Token* tmp = num_pop();
+          post_push(num_pop());
+          post_push(tmp);
+          post_push(op_pop());
+        } else {
+          post_push(num_pop());
+          post_push(op_pop());
+        }
       }
       op_push(tokens[i]);
     }
   }
 
-  if (post_empty() && !token_mono(op_top()->type)) post_push(num_pop());
   while (!num_empty() && !op_empty()) {
-    post_push(num_pop());
-    post_push(op_pop());
+    if (post_empty() && !token_mono(op_top()->type)) {
+      Token* tmp = num_pop();
+      post_push(num_pop());
+      post_push(tmp);
+      post_push(op_pop());
+    } else {
+      post_push(num_pop());
+      post_push(op_pop());
+    }
   }
 
   if (!num_empty() || !op_empty()) goto L_EXPR_RELEASE;
@@ -331,8 +342,8 @@ uint32_t expr(char* e, bool* success) {
         }
         integer_push(ans);
       } else {
-        x = integer_pop();
-        ans = y = integer_pop();
+        y = integer_pop();
+        ans = x = integer_pop();
         switch (post_v[i]->type) {
           case TK_EQ : ans = x == y; break;
           case TK_UNEQ : ans = x != y; break;
