@@ -331,12 +331,11 @@ uint32_t expr(char* e, bool* success) {
         integer_push(ans);
       }
     }
+    Log("%d", i);
   }
 
   ret = (uint32_t) integer_pop();
   *success = true;
-
-  Log("%d", 1);
 
 L_EXPR_RELEASE:
   nr_token = 0;
