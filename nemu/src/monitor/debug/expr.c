@@ -300,6 +300,7 @@ uint32_t expr(char* e, bool* success) {
   integer_clear();
 
   for (int i = 0; i < nr_token; ++i) {
+    Log("%d", i);
     if (token_num(post_v[i]->type)) integer_push(readnum(post_v[i]));
     else {
       if (token_priority[post_v[i]->type] == 0) break;
@@ -331,7 +332,6 @@ uint32_t expr(char* e, bool* success) {
         integer_push(ans);
       }
     }
-    Log("%d", i);
   }
 
   ret = (uint32_t) integer_pop();
