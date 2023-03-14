@@ -69,7 +69,7 @@ static struct rule {
   {        "\\)",       ')'}, // right brace
   {  "\\$[a-z]+",    TK_REG}, // register
   {"0x[0-9a-f]+",    TK_HEX}, // hexadecimal
-  {       "\\d+",    TK_DEC}, // number
+  {       "\\[0-9]+",    TK_DEC}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
