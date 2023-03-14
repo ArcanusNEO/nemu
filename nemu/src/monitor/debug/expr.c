@@ -336,6 +336,8 @@ uint32_t expr(char* e, bool* success) {
   ret = (uint32_t) integer_pop();
   *success = true;
 
+  Log("%d", 1);
+
 L_EXPR_RELEASE:
   nr_token = 0;
   num_i = 0;
