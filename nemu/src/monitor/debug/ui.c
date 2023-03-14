@@ -23,12 +23,9 @@ char* rl_gets() {
 
   line_read = readline("(nemu) ");
 
-  printf("%p\n", line_read);
-
   if (line_read && *line_read) {
     add_history(line_read);
   }
-  puts("1");
   return line_read;
 }
 
@@ -161,7 +158,7 @@ void ui_mainloop(int is_batch_mode) {
 
   while (1) {
     char* str = rl_gets();
-    // for (int i = 0; str[i]; ++i) printf("%d ", str[i]);
+    printf("%p\n", str);
     char* str_end = str + strlen(str);
 
     /* extract the first token as the command */
