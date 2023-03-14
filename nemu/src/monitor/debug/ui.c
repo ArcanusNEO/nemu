@@ -82,7 +82,7 @@ static int cmd_p(char* args) {
   uint32_t ans = expr(args, &res);
   if (!res) goto L_CMD_P_USAGE;
 
-  printf("%u\n", ans);
+  printf("%d\t%x\n", ans, ans);
   return 0;
 
 L_CMD_P_USAGE:
