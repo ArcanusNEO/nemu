@@ -69,7 +69,7 @@ static struct rule {
   {           "\\)",       ')'}, // right brace
   {  "\\$[a-zA-Z]+",    TK_REG}, // register
   {"0x[0-9a-fA-F]+",    TK_HEX}, // hexadecimal
-  {        "[0-9]+",    TK_DEC}, // number
+  {        "[0-9]+",    TK_DEC}, // decimal
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -206,7 +206,7 @@ static bool make_token(char* e) {
   return true;
 }
 
-static true_inline bool token_num(int type) {
+static true_inline bool token_var(int type) {
   return type == TK_REG || type == TK_HEX || type == TK_DEC;
 }
 
@@ -218,18 +218,18 @@ static true_inline bool token_mono(int type) {
   do {                                               \
     for (int i = 0; i < nr_token; ++i)               \
       if (tokens[i]->type == (src) &&                \
-        (i == 0 || !token_num(tokens[i - 1]->type))) \
+        (i == 0 || !token_var(tokens[i - 1]->type))) \
         tokens[i]->type = (dst);                     \
   } while (0)
 
-Token* num_v[TKOEN_V_SZ];
-int num_i;
+Token* var_v[TKOEN_V_SZ];
+int var_i;
 Token* op_v[TKOEN_V_SZ];
 int op_i;
 Token* post_v[TKOEN_V_SZ];
 int post_i;
-int64_t integer_v[TKOEN_V_SZ];
-int integer_i;
+int64_t num_v[TKOEN_V_SZ];
+int num_i;
 
 #define stack_push(container, index, object) ((container)[(index)++] = (object))
 #define stack_pop(container, index)          (container)[--(index)]
@@ -252,12 +252,12 @@ int integer_i;
   static true_inline bool name##_empty(void) { return stack_empty(name##_i); } \
   static true_inline size_t name##_size(void) { return stack_size(name##_i); }
 
-stack_code(Token*, num);
+stack_code(Token*, var);
 stack_code(Token*, op);
 stack_code(Token*, post);
-stack_code(int64_t, integer);
+stack_code(int64_t, num);
 
-int64_t readnum(Token* tk) {
+int64_t readvar(Token* tk) {
   if (tk == NULL || tk->str == NULL) return 0;
   int64_t ans = 0;
   switch (tk->type) {
@@ -280,23 +280,23 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('+', TK_POS);
 
   for (int i = 0; i < nr_token; ++i) {
-    if (token_num(tokens[i]->type)) Log("%s", tokens[i]->str);
-    else if (tokens[i]->type < 256) Log("%c", tokens[i]->type);
-    else Log("%d", tokens[i]->type);
+    // if (token_var(tokens[i]->type)) Log("%s", tokens[i]->str);
+    // else if (tokens[i]->type < 256) Log("%c", tokens[i]->type);
+    // else Log("%d", tokens[i]->type);
 
-    if (token_num(tokens[i]->type)) num_push(tokens[i]);
+    if (token_var(tokens[i]->type)) var_push(tokens[i]);
     else {
       // + 5
       // * 4
       while (!op_empty() &&
         token_priority[op_top()->type] < token_priority[tokens[i]->type]) {
         if (post_empty() && !token_mono(op_top()->type)) {
-          Token* tmp = num_pop();
-          post_push(num_pop());
+          Token* tmp = var_pop();
+          post_push(var_pop());
           post_push(tmp);
           post_push(op_pop());
         } else {
-          post_push(num_pop());
+          post_push(var_pop());
           post_push(op_pop());
         }
       }
@@ -304,35 +304,35 @@ uint32_t expr(char* e, bool* success) {
     }
   }
 
-  while (!num_empty() && !op_empty()) {
+  while (!var_empty() && !op_empty()) {
     if (post_empty() && !token_mono(op_top()->type)) {
-      Token* tmp = num_pop();
-      post_push(num_pop());
+      Token* tmp = var_pop();
+      post_push(var_pop());
       post_push(tmp);
       post_push(op_pop());
     } else {
-      post_push(num_pop());
+      post_push(var_pop());
       post_push(op_pop());
     }
   }
 
-  if (!num_empty() || !op_empty()) goto L_EXPR_RELEASE;
+  if (!var_empty() || !op_empty()) goto L_EXPR_RELEASE;
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
-  integer_clear();
+  num_clear();
 
   for (int i = 0; i < nr_token; ++i) {
-    if (token_num(post_v[i]->type)) Log("%s", post_v[i]->str);
-    else if (post_v[i]->type < 256) Log("%c", post_v[i]->type);
-    else Log("%d", post_v[i]->type);
+    // if (token_var(post_v[i]->type)) Log("%s", post_v[i]->str);
+    // else if (post_v[i]->type < 256) Log("%c", post_v[i]->type);
+    // else Log("%d", post_v[i]->type);
 
-    if (token_num(post_v[i]->type)) integer_push(readnum(post_v[i]));
+    if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
       if (token_priority[post_v[i]->type] == 0) break;
       if (token_mono(post_v[i]->type)) {
         // type == '!' || type == TK_POS || type == TK_NEG || type == TK_DEREF;
-        ans = x = integer_pop();
+        ans = x = num_pop();
         switch (post_v[i]->type) {
           case '!' : ans = !x; break;
           case TK_POS : ans = +x; break;
@@ -340,10 +340,10 @@ uint32_t expr(char* e, bool* success) {
           case TK_DEREF : ans = vaddr_read((vaddr_t) x, 4); break;
           default : break;
         }
-        integer_push(ans);
+        num_push(ans);
       } else {
-        y = integer_pop();
-        ans = x = integer_pop();
+        y = num_pop();
+        ans = x = num_pop();
         switch (post_v[i]->type) {
           case TK_EQ : ans = x == y; break;
           case TK_UNEQ : ans = x != y; break;
@@ -355,23 +355,23 @@ uint32_t expr(char* e, bool* success) {
           case '/' : ans = x / y; break;
           default : break;
         }
-        integer_push(ans);
+        num_push(ans);
       }
     }
   }
 
-  ret = (uint32_t) integer_pop();
+  ret = (uint32_t) num_pop();
   *success = true;
 
 L_EXPR_RELEASE:
   nr_token = 0;
-  num_i = 0;
+  var_i = 0;
   op_i = 0;
   post_i = 0;
   for (int i = 0; i < nr_token; ++i) {
     free(tokens[i]);
     tokens[i] = NULL;
-    num_v[i] = NULL;
+    var_v[i] = NULL;
     op_v[i] = NULL;
     post_v[i] = NULL;
   }
