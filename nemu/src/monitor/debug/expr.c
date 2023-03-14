@@ -33,12 +33,12 @@ static struct rule {
   {  "&&",    TK_AND}, // logical and
   { "\\+",       '+'}, // plus & positive
   {   "-",       '-'}, // minus & negative
-  {   "*",       '*'}, // multiplication & dereference
+  { "\\*",       '*'}, // multiplication & dereference
   {   "/",       '/'}, // division
   {   "!",       '!'}, // logical not
-  {   "(",       '('}, // left brace
-  {   ")",       ')'}, // right brace
-  // {"\\d+",    TK_NUM}, // number
+  { "\\(",       '('}, // left brace
+  { "\\)",       ')'}, // right brace
+  {"\\d+",    TK_NUM}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
