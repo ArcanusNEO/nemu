@@ -28,7 +28,7 @@ char* rl_gets() {
   if (line_read && *line_read) {
     add_history(line_read);
   }
-
+  puts("1");
   return line_read;
 }
 
