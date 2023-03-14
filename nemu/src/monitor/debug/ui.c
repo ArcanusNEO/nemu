@@ -23,7 +23,7 @@ char* rl_gets() {
 
   line_read = readline("(nemu) ");
 
-  printf("%p", line_read);
+  printf("%p\n", line_read);
 
   if (line_read && *line_read) {
     add_history(line_read);
