@@ -12,8 +12,8 @@ enum {
 
   /* TODO: Add more token types */
   TK_UNEQ,
-  TK_AND,
-  TK_OR,
+  TK_LAND,
+  TK_LOR,
   TK_DEC,
   TK_HEX,
   TK_REG,
@@ -22,6 +22,28 @@ enum {
   TK_POS,
   TK_NEG,
 };
+
+static int token_priority[] = {['\0'] = 0,
+  ['('] = 1,
+  [')'] = 1,
+
+  ['!'] = 2,
+  [TK_POS] = 2,
+  [TK_NEG] = 2,
+  [TK_DEREF] = 2,
+
+  ['*'] = 4,
+  ['/'] = 4,
+
+  ['+'] = 5,
+  ['-'] = 5,
+
+  [TK_EQ] = 8,
+  [TK_UNEQ] = 8,
+
+  [TK_LAND] = 12,
+
+  [TK_LOR] = 13};
 
 static struct rule {
   char* regex;
@@ -35,8 +57,8 @@ static struct rule {
   {         " +", TK_NOTYPE}, // spaces
   {         "==",     TK_EQ}, // equal
   {         "!=",   TK_UNEQ}, // unequal
-  {         "||",     TK_OR}, // logical or
-  {         "&&",    TK_AND}, // logical and
+  {         "||",    TK_LOR}, // logical or
+  {         "&&",   TK_LAND}, // logical and
   {        "\\+",       '+'}, // plus & positive
   {          "-",       '-'}, // minus & negative
   {        "\\*",       '*'}, // multiplication & dereference
@@ -88,7 +110,7 @@ static bool make_token(char* e) {
   nr_token = 0;
 
   while (e[position] != '\0') {
-    if (nr_token >= lengthof(tokens)) return false;
+    if (nr_token + 1 >= lengthof(tokens)) return false;
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 &&
@@ -115,13 +137,13 @@ static bool make_token(char* e) {
             tk = tokens[nr_token++] = malloc(sizeof(Token));
             tk->type = TK_UNEQ;
             break;
-          case TK_OR :
+          case TK_LOR :
             tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = TK_OR;
+            tk->type = TK_LOR;
             break;
-          case TK_AND :
+          case TK_LAND :
             tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = TK_AND;
+            tk->type = TK_LAND;
             break;
           case '+' :
             tk = tokens[nr_token++] = malloc(sizeof(Token));
@@ -180,56 +202,139 @@ static bool make_token(char* e) {
       return false;
     }
   }
-
+  tokens[nr_token++] = calloc(1, sizeof(Token));
   return true;
 }
 
-#define map_tokens_mono_op(src, dst)                                         \
-  do {                                                                       \
-    for (int i = 0; i < nr_token; ++i)                                       \
-      if (tokens[i]->type == (src) &&                                        \
-        (i == 0 ||                                                           \
-          (tokens[i - 1]->type != TK_REG && tokens[i - 1]->type != TK_HEX && \
-            tokens[i - 1]->type != TK_DEC)))                                 \
-        tokens[i]->type = (dst);                                             \
+static true_inline bool token_num(int type) {
+  return type == TK_REG || type == TK_HEX || type == TK_DEC;
+}
+
+static true_inline bool token_mono(int type) {
+  return type == '!' || type == TK_POS || type == TK_NEG || type == TK_DEREF;
+}
+
+#define map_tokens_mono_op(src, dst)                 \
+  do {                                               \
+    for (int i = 0; i < nr_token; ++i)               \
+      if (tokens[i]->type == (src) &&                \
+        (i == 0 || !token_num(tokens[i - 1]->type))) \
+        tokens[i]->type = (dst);                     \
   } while (0)
 
 Token* num_v[TKOEN_V_SZ];
 int num_i;
-int op_v[TKOEN_V_SZ];
+Token* op_v[TKOEN_V_SZ];
 int op_i;
+Token* post_v[TKOEN_V_SZ];
+int post_i;
+int64_t integer_v[TKOEN_V_SZ];
+int integer_i;
 
 #define stack_push(container, index, object) ((container)[(index)++] = (object))
 #define stack_pop(container, index)          (container)[--(index)]
+#define stack_top(container, index)          (container)[(index) -1]
 #define stack_clear(index)                   ((index) = 0)
 #define stack_empty(index)                   ((index) == 0)
 #define stack_size(index)                    (index)
 
-#define stack_code(type, name)                                                \
-  static true_inline type name##_push(type obj) {                             \
-    return stack_push(name##_v, name##_i, obj);                               \
-  }                                                                           \
-  static true_inline type name##_pop(void) {                                  \
-    return stack_pop(name##_v, name##_i);                                     \
-  }                                                                           \
-  static true_inline void name##_clear(void) { stack_clear(name##_i); }       \
-  static true_inline int name##_empty(void) { return stack_empty(name##_i); } \
+#define stack_code(type, name)                                                 \
+  static true_inline type name##_push(type obj) {                              \
+    return stack_push(name##_v, name##_i, obj);                                \
+  }                                                                            \
+  static true_inline type name##_pop(void) {                                   \
+    return stack_pop(name##_v, name##_i);                                      \
+  }                                                                            \
+  static true_inline type name##_top(void) {                                   \
+    return stack_top(name##_v, name##_i);                                      \
+  }                                                                            \
+  static true_inline void name##_clear(void) { stack_clear(name##_i); }        \
+  static true_inline bool name##_empty(void) { return stack_empty(name##_i); } \
   static true_inline size_t name##_size(void) { return stack_size(name##_i); }
 
 stack_code(Token*, num);
+stack_code(Token*, op);
+stack_code(Token*, post);
+stack_code(int64_t, integer);
 
-stack_code(int, op);
+int64_t readnum(Token* tk) {
+  TODO();
+  return 0;
+}
 
 uint32_t expr(char* e, bool* success) {
-  if (!make_token(e)) {
-    *success = false;
-    return 0;
-  }
+  uint32_t ret = 0;
+  *success = false;
+  if (!make_token(e)) goto L_EXPR_RELEASE;
 
   /* TODO: Insert codes to evaluate the expression. */
   map_tokens_mono_op('*', TK_DEREF);
   map_tokens_mono_op('-', TK_NEG);
   map_tokens_mono_op('+', TK_POS);
 
-  return 0;
+  for (int i = 0; i < nr_token; ++i) {
+    if (token_num(tokens[i]->type)) num_push(tokens[i]);
+    else {
+      while (!op_empty() &&
+        token_priority[op_top()->type] < token_priority[tokens[i]->type]) {
+        if (post_empty()) post_push(num_pop());
+        post_push(num_pop());
+        post_push(op_pop());
+      }
+      op_push(tokens[i]);
+    }
+  }
+
+  int64_t ans = 0;
+  int64_t x = 0, y = 0;
+
+  for (int i = 0; i < nr_token; ++i) {
+    if (token_num(post_v[i]->type)) integer_push(readnum(post_v[i]));
+    else {
+      if (token_priority[post_v[i]->type] == 0) break;
+      if (token_mono(post_v[i]->type)) {
+        // type == '!' || type == TK_POS || type == TK_NEG || type == TK_DEREF;
+        ans = x = integer_pop();
+        switch (post_v[i]->type) {
+          case '!' : ans = !x; break;
+          case TK_POS : ans = +x; break;
+          case TK_NEG : ans = -x; break;
+          case TK_DEREF : ans = vaddr_read((vaddr_t) x, 4); break;
+          default : break;
+        }
+        integer_push(ans);
+      } else {
+        x = integer_pop();
+        ans = y = integer_pop();
+        switch (post_v[i]->type) {
+          case TK_EQ : ans = x == y; break;
+          case TK_UNEQ : ans = x != y; break;
+          case TK_LOR : ans = x || y; break;
+          case TK_LAND : ans = x && y; break;
+          case '+' : ans = x + y; break;
+          case '-' : ans = x - y; break;
+          case '*' : ans = x * y; break;
+          case '/' : ans = x / y; break;
+          default : break;
+        }
+        integer_push(ans);
+      }
+    }
+  }
+
+  ret = (uint32_t) ans;
+
+L_EXPR_RELEASE:
+  nr_token = 0;
+  num_i = 0;
+  op_i = 0;
+  post_i = 0;
+  for (int i = 0; i < nr_token; ++i) {
+    free(tokens[i]);
+    tokens[i] = NULL;
+    num_v[i] = NULL;
+    op_v[i] = NULL;
+    post_v[i] = NULL;
+  }
+  return ret;
 }
