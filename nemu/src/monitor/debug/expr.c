@@ -64,10 +64,10 @@ void init_regex() {
 
 typedef struct token {
   int type;
-  char str[32];
+  char str[0];
 } Token;
 
-Token tokens[32];
+Token* tokens[32];
 int nr_token;
 
 static bool make_token(char* e) {
@@ -78,6 +78,7 @@ static bool make_token(char* e) {
   nr_token = 0;
 
   while (e[position] != '\0') {
+    if (nr_token >= lengthof(tokens)) return false;
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 &&
@@ -93,9 +94,60 @@ static bool make_token(char* e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
+        Token* tk = NULL;
         switch (rules[i].token_type) {
-          default : TODO();
+          case TK_NOTYPE : break;
+          case TK_EQ :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = TK_EQ;
+            break;
+          case TK_UNEQ :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = TK_UNEQ;
+            break;
+          case TK_OR :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = TK_OR;
+            break;
+          case TK_AND :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = TK_AND;
+            break;
+          case '+' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '+';
+            break;
+          case '-' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '-';
+            break;
+          case '*' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '*';
+            break;
+          case '/' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '/';
+            break;
+          case '!' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '!';
+            break;
+          case '(' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '(';
+            break;
+          case ')' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = ')';
+            break;
+          case TK_NUM :
+            tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
+            tk->type = TK_NUM;
+            strncpy(tk->str, substr_start, substr_len);
+            tk->str[substr_len] = '\0';
+            break;
+          default : break;
         }
 
         break;

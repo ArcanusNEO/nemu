@@ -9,6 +9,7 @@
 
 #include "debug.h"
 #include "macro.h"
+#include "neoc.h"
 
 #include <stdint.h>
 #include <assert.h>
