@@ -14,6 +14,7 @@ enum {
   TK_UNEQ,
   TK_AND,
   TK_OR,
+  TK_NUM,
 };
 
 static struct rule {
@@ -25,16 +26,19 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  { " +", TK_NOTYPE}, // spaces
-  { "==",     TK_EQ}, // equal
-  { "!=",   TK_UNEQ}, // unequal
-  { "||",     TK_OR}, // logical or
-  { "&&",    TK_AND}, // logical and
-  {"\\+",       '+'}, // plus & positive
-  {  "-",       '-'}, // minus & negative
-  {  "*",       '*'}, // multiplication & dereference
-  {  "/",       '/'}, // division
-  {  "!",       '!'}, // logical not
+  {  " +", TK_NOTYPE}, // spaces
+  {  "==",     TK_EQ}, // equal
+  {  "!=",   TK_UNEQ}, // unequal
+  {  "||",     TK_OR}, // logical or
+  {  "&&",    TK_AND}, // logical and
+  { "\\+",       '+'}, // plus & positive
+  {   "-",       '-'}, // minus & negative
+  {   "*",       '*'}, // multiplication & dereference
+  {   "/",       '/'}, // division
+  {   "!",       '!'}, // logical not
+  {   "(",       '('}, // left brace
+  {   ")",       ')'}, // right brace
+  {"\\d+",    TK_NUM}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
