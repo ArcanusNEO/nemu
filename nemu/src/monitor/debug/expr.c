@@ -280,7 +280,7 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('+', TK_POS);
 
   for (int i = 0; i < nr_token; ++i) {
-    Log("%d", tokens[i]->type);
+    // Log("%d", tokens[i]->type);
     if (token_num(tokens[i]->type)) num_push(tokens[i]);
     else {
       // + 5
@@ -308,7 +308,8 @@ uint32_t expr(char* e, bool* success) {
   integer_clear();
 
   for (int i = 0; i < nr_token; ++i) {
-    // Log("%d", i);
+    if (i < 256) Log("%c", i);
+    else Log("%d", i);
     if (token_num(post_v[i]->type)) integer_push(readnum(post_v[i]));
     else {
       if (token_priority[post_v[i]->type] == 0) break;
