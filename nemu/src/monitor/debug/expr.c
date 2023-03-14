@@ -69,7 +69,7 @@ static struct rule {
   {           "\\)",       ')'}, // right brace
   {  "\\$[a-zA-Z]+",    TK_REG}, // register
   {"0x[0-9a-fA-F]+",    TK_HEX}, // hexadecimal
-  {        "\\d+",    TK_DEC}, // number
+  {        "[0-9]+",    TK_DEC}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -113,7 +113,7 @@ static bool make_token(char* e) {
   while (e[position] != '\0') {
     if (nr_token >= lengthof(tokens)) return false;
     /* Try all rules one by one. */
-    for (i = 0; i < NR_REGEX; i++) {
+    for (i = 0; i < NR_REGEX; ++i) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 &&
         pmatch.rm_so == 0) {
         char* substr_start = e + position;
