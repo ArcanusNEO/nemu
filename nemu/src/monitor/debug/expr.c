@@ -286,15 +286,21 @@ uint32_t expr(char* e, bool* success) {
       // * 4
       while (!op_empty() &&
         token_priority[op_top()->type] < token_priority[tokens[i]->type]) {
-        if (post_empty()) post_push(num_pop());
+        if (post_empty() && !token_mono(op_top()->type)) post_push(num_pop());
         post_push(num_pop());
         post_push(op_pop());
       }
       op_push(tokens[i]);
     }
   }
-  while (!num_empty()) post_push(num_pop());
-  while (!op_empty()) post_push(op_pop());
+
+  if (post_empty() && !token_mono(op_top()->type)) post_push(num_pop());
+  while (!num_empty() && !op_empty()) {
+    post_push(num_pop());
+    post_push(op_pop());
+  }
+  
+  if (!num_empty() || !op_empty()) goto L_EXPR_RELEASE;
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
