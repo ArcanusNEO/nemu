@@ -294,8 +294,6 @@ uint32_t expr(char* e, bool* success) {
     }
   }
 
-  Log("%d", 1);
-
   int64_t ans = 0;
   int64_t x = 0, y = 0;
 
@@ -342,7 +340,7 @@ L_EXPR_RELEASE:
   op_i = 0;
   post_i = 0;
   for (int i = 0; i < nr_token; ++i) {
-    free(tokens[i]);
+    if (tokens[i]) free(tokens[i]);
     tokens[i] = NULL;
     num_v[i] = NULL;
     op_v[i] = NULL;
