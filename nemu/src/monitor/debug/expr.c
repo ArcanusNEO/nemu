@@ -58,7 +58,7 @@ static struct rule {
   {         " +", TK_NOTYPE}, // spaces
   {         "==",     TK_EQ}, // equal
   {         "!=",   TK_UNEQ}, // unequal
-  {         "||",    TK_LOR}, // logical or
+  {         "\\|\\|",    TK_LOR}, // logical or
   {         "&&",   TK_LAND}, // logical and
   {        "\\+",       '+'}, // plus & positive
   {          "-",       '-'}, // minus & negative
