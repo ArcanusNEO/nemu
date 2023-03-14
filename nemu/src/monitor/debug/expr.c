@@ -280,6 +280,7 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('+', TK_POS);
 
   for (int i = 0; i < nr_token; ++i) {
+    Log("%d", tokens[i]->type);
     if (token_num(tokens[i]->type)) num_push(tokens[i]);
     else {
       // + 5
@@ -299,7 +300,7 @@ uint32_t expr(char* e, bool* success) {
     post_push(num_pop());
     post_push(op_pop());
   }
-  
+
   if (!num_empty() || !op_empty()) goto L_EXPR_RELEASE;
 
   int64_t ans = 0;
