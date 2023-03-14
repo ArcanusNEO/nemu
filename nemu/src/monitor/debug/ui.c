@@ -76,12 +76,10 @@ static struct {
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
 
 static int cmd_p(char* args) {
-  Log("%s", args);
-  char* e = strtok(NULL, " ");
-  if (e == NULL) goto L_CMD_P_USAGE;
+  if (args == NULL) goto L_CMD_P_USAGE;
 
   bool res;
-  uint32_t ans = expr(e, &res);
+  uint32_t ans = expr(args, &res);
   if (!res) goto L_CMD_P_USAGE;
 
   printf("%u\n", ans);
