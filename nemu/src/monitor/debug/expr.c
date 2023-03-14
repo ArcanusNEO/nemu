@@ -38,7 +38,7 @@ static struct rule {
   {   "!",       '!'}, // logical not
   {   "(",       '('}, // left brace
   {   ")",       ')'}, // right brace
-  {"\\d+",    TK_NUM}, // number
+  // {"\\d+",    TK_NUM}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
