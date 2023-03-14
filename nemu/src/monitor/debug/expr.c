@@ -191,7 +191,6 @@ static bool make_token(char* e) {
             tk->type = TK_DEC;
             strncpy(tk->str, substr_start, substr_len);
             tk->str[substr_len] = '\0';
-            // Log("%s", tk->str);
             break;
           default : break;
         }
@@ -333,6 +332,7 @@ uint32_t expr(char* e, bool* success) {
   }
 
   ret = (uint32_t) ans;
+  *success = true;
 
 L_EXPR_RELEASE:
   nr_token = 0;
