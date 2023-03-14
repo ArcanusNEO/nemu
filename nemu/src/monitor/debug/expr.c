@@ -67,8 +67,8 @@ static struct rule {
   {          "!",       '!'}, // logical not
   {        "\\(",       '('}, // left brace
   {        "\\)",       ')'}, // right brace
-  {  "\\$[a-z]+",    TK_REG}, // register
-  {"0x[0-9a-f]+",    TK_HEX}, // hexadecimal
+  {  "\\$[a-zA-Z]+",    TK_REG}, // register
+  {"0x[0-9a-fA-F]+",    TK_HEX}, // hexadecimal
   {       "[0-9]+",    TK_DEC}, // number
 };
 
@@ -191,6 +191,7 @@ static bool make_token(char* e) {
             tk->type = TK_DEC;
             strncpy(tk->str, substr_start, substr_len);
             tk->str[substr_len] = '\0';
+            Log("%s", tk->str);
             break;
           default : break;
         }
