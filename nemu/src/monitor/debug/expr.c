@@ -14,7 +14,13 @@ enum {
   TK_UNEQ,
   TK_AND,
   TK_OR,
-  TK_NUM,
+  TK_DEC,
+  TK_HEX,
+  TK_REG,
+
+  TK_DEREF,
+  TK_POS,
+  TK_NEG,
 };
 
 static struct rule {
@@ -26,19 +32,21 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {  " +", TK_NOTYPE}, // spaces
-  {  "==",     TK_EQ}, // equal
-  {  "!=",   TK_UNEQ}, // unequal
-  {  "||",     TK_OR}, // logical or
-  {  "&&",    TK_AND}, // logical and
-  { "\\+",       '+'}, // plus & positive
-  {   "-",       '-'}, // minus & negative
-  { "\\*",       '*'}, // multiplication & dereference
-  {   "/",       '/'}, // division
-  {   "!",       '!'}, // logical not
-  { "\\(",       '('}, // left brace
-  { "\\)",       ')'}, // right brace
-  {"\\d+",    TK_NUM}, // number
+  {         " +", TK_NOTYPE}, // spaces
+  {         "==",     TK_EQ}, // equal
+  {         "!=",   TK_UNEQ}, // unequal
+  {         "||",     TK_OR}, // logical or
+  {         "&&",    TK_AND}, // logical and
+  {        "\\+",       '+'}, // plus & positive
+  {          "-",       '-'}, // minus & negative
+  {        "\\*",       '*'}, // multiplication & dereference
+  {          "/",       '/'}, // division
+  {          "!",       '!'}, // logical not
+  {        "\\(",       '('}, // left brace
+  {        "\\)",       ')'}, // right brace
+  {  "\\$[a-z]+",    TK_REG}, // register
+  {"0x[0-9a-f]+",    TK_HEX}, // hexadecimal
+  {       "\\d+",    TK_DEC}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -67,7 +75,9 @@ typedef struct token {
   char str[0];
 } Token;
 
-Token* tokens[32];
+#define TKOEN_V_SZ 32
+
+Token* tokens[TKOEN_V_SZ];
 int nr_token;
 
 static bool make_token(char* e) {
@@ -141,15 +151,26 @@ static bool make_token(char* e) {
             tk = tokens[nr_token++] = malloc(sizeof(Token));
             tk->type = ')';
             break;
-          case TK_NUM :
+          case TK_REG :
             tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
-            tk->type = TK_NUM;
+            tk->type = TK_REG;
+            strncpy(tk->str, substr_start, substr_len);
+            tk->str[substr_len] = '\0';
+            break;
+          case TK_HEX :
+            tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
+            tk->type = TK_HEX;
+            strncpy(tk->str, substr_start, substr_len);
+            tk->str[substr_len] = '\0';
+            break;
+          case TK_DEC :
+            tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
+            tk->type = TK_DEC;
             strncpy(tk->str, substr_start, substr_len);
             tk->str[substr_len] = '\0';
             break;
           default : break;
         }
-
         break;
       }
     }
@@ -163,6 +184,42 @@ static bool make_token(char* e) {
   return true;
 }
 
+#define map_tokens_mono_op(src, dst)                                         \
+  do {                                                                       \
+    for (int i = 0; i < nr_token; ++i)                                       \
+      if (tokens[i]->type == (src) &&                                        \
+        (i == 0 ||                                                           \
+          (tokens[i - 1]->type != TK_REG && tokens[i - 1]->type != TK_HEX && \
+            tokens[i - 1]->type != TK_DEC)))                                 \
+        tokens[i]->type = (dst);                                             \
+  } while (0)
+
+Token* num_v[TKOEN_V_SZ];
+int num_i;
+int op_v[TKOEN_V_SZ];
+int op_i;
+
+#define stack_push(container, index, object) ((container)[(index)++] = (object))
+#define stack_pop(container, index)          (container)[--(index)]
+#define stack_clear(index)                   ((index) = 0)
+#define stack_empty(index)                   ((index) == 0)
+#define stack_size(index)                    (index)
+
+#define stack_code(type, name)                                                \
+  static true_inline type name##_push(type obj) {                             \
+    return stack_push(name##_v, name##_i, obj);                               \
+  }                                                                           \
+  static true_inline type name##_pop(void) {                                  \
+    return stack_pop(name##_v, name##_i);                                     \
+  }                                                                           \
+  static true_inline void name##_clear(void) { stack_clear(name##_i); }       \
+  static true_inline int name##_empty(void) { return stack_empty(name##_i); } \
+  static true_inline size_t name##_size(void) { return stack_size(name##_i); }
+
+stack_code(Token*, num);
+
+stack_code(int, op);
+
 uint32_t expr(char* e, bool* success) {
   if (!make_token(e)) {
     *success = false;
@@ -170,7 +227,9 @@ uint32_t expr(char* e, bool* success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  map_tokens_mono_op('*', TK_DEREF);
+  map_tokens_mono_op('-', TK_NEG);
+  map_tokens_mono_op('+', TK_POS);
 
   return 0;
 }
