@@ -191,7 +191,7 @@ static bool make_token(char* e) {
             tk->type = TK_DEC;
             strncpy(tk->str, substr_start, substr_len);
             tk->str[substr_len] = '\0';
-            Log("%s", tk->str);
+            // Log("%s", tk->str);
             break;
           default : break;
         }
@@ -204,7 +204,9 @@ static bool make_token(char* e) {
       return false;
     }
   }
-  tokens[nr_token++] = calloc(1, sizeof(Token));
+  tokens[nr_token] = malloc(sizeof(Token));
+  tokens[nr_token]->type = 0;
+  ++nr_token;
   return true;
 }
 
