@@ -28,8 +28,8 @@ static struct rule {
   { " +", TK_NOTYPE}, // spaces
   { "==",     TK_EQ}, // equal
   { "!=",   TK_UNEQ}, // unequal
-  { "||",   TK_UNEQ}, // logical or
-  { "&&",   TK_UNEQ}, // logical and
+  { "||",     TK_OR}, // logical or
+  { "&&",    TK_AND}, // logical and
   {"\\+",       '+'}, // plus & positive
   {  "-",       '-'}, // minus & negative
   {  "*",       '*'}, // multiplication & dereference
