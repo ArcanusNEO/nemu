@@ -294,6 +294,8 @@ uint32_t expr(char* e, bool* success) {
     }
   }
 
+  Log("%d", 1);
+
   int64_t ans = 0;
   int64_t x = 0, y = 0;
 
