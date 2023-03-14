@@ -289,7 +289,7 @@ uint32_t expr(char* e, bool* success) {
       // + 5
       // * 4
       while (!op_empty() &&
-        token_priority[op_top()->type] < token_priority[tokens[i]->type]) {
+        token_priority[op_top()->type] <= token_priority[tokens[i]->type]) {
         if (post_empty() && !token_mono(op_top()->type)) {
           Token* tmp = var_pop();
           post_push(var_pop());
