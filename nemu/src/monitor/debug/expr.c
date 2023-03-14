@@ -14,7 +14,6 @@ enum {
   TK_UNEQ,
   TK_AND,
   TK_OR,
-  TK_NOT,
 };
 
 static struct rule {
@@ -35,7 +34,7 @@ static struct rule {
   {  "-",       '-'}, // minus & negative
   {  "*",       '*'}, // multiplication & dereference
   {  "/",       '/'}, // division
-  {  "!",    TK_NOT}, // logical not
+  {  "!",       '!'}, // logical not
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
