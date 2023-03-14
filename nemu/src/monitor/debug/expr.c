@@ -55,21 +55,21 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {         " +", TK_NOTYPE}, // spaces
-  {         "==",     TK_EQ}, // equal
-  {         "!=",   TK_UNEQ}, // unequal
-  {         "\\|\\|",    TK_LOR}, // logical or
-  {         "&&",   TK_LAND}, // logical and
-  {        "\\+",       '+'}, // plus & positive
-  {          "-",       '-'}, // minus & negative
-  {        "\\*",       '*'}, // multiplication & dereference
-  {          "/",       '/'}, // division
-  {          "!",       '!'}, // logical not
-  {        "\\(",       '('}, // left brace
-  {        "\\)",       ')'}, // right brace
+  {            " +", TK_NOTYPE}, // spaces
+  {            "==",     TK_EQ}, // equal
+  {            "!=",   TK_UNEQ}, // unequal
+  {        "\\|\\|",    TK_LOR}, // logical or
+  {            "&&",   TK_LAND}, // logical and
+  {           "\\+",       '+'}, // plus & positive
+  {             "-",       '-'}, // minus & negative
+  {           "\\*",       '*'}, // multiplication & dereference
+  {             "/",       '/'}, // division
+  {             "!",       '!'}, // logical not
+  {           "\\(",       '('}, // left brace
+  {           "\\)",       ')'}, // right brace
   {  "\\$[a-zA-Z]+",    TK_REG}, // register
   {"0x[0-9a-fA-F]+",    TK_HEX}, // hexadecimal
-  {       "[0-9]+",    TK_DEC}, // number
+  {        "[0-9]+",    TK_DEC}, // number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -111,7 +111,7 @@ static bool make_token(char* e) {
   nr_token = 0;
 
   while (e[position] != '\0') {
-    if (nr_token + 1 >= lengthof(tokens)) return false;
+    if (nr_token >= lengthof(tokens)) return false;
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 &&
@@ -203,9 +203,6 @@ static bool make_token(char* e) {
       return false;
     }
   }
-  tokens[nr_token] = malloc(sizeof(Token));
-  tokens[nr_token]->type = 0;
-  ++nr_token;
   return true;
 }
 
@@ -294,6 +291,8 @@ uint32_t expr(char* e, bool* success) {
       op_push(tokens[i]);
     }
   }
+  while (!num_empty()) post_push(num_pop());
+  while (!op_empty()) post_push(op_pop());
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
