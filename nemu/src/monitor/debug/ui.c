@@ -44,6 +44,8 @@ static int cmd_si(char* args);
 
 static int cmd_info(char* args);
 
+static int cmd_p(char* args);
+
 static int cmd_x(char* args);
 
 static int cmd_cls(char* args) {
@@ -65,6 +67,7 @@ static struct {
   {  "si",                                                                       "Pause program execution after N instructions have been executed",
    cmd_si                                                                                                                                                   },
   {"info",                                                                                                               "Print the program state", cmd_info},
+  {   "p",                                                                                        "Calculate the value of the expression \"EXPR\"",    cmd_p},
   {   "x",
    "Calculate the value of the expression \"EXPR\" and output N continuous 4-byte memory addresses in hexadecimal format starting from the result",
    cmd_x                                                                                                                                                    },
@@ -72,15 +75,31 @@ static struct {
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
 
+static int cmd_p(char* args) {
+  char* e = strtok(NULL, " ");
+  if (e == NULL) goto L_CMD_P_USAGE;
+
+  bool res;
+  uint32_t ans = expr(e, &res);
+  if (!res) goto L_CMD_P_USAGE;
+
+  printf("%u\n", ans);
+  return 0;
+
+L_CMD_P_USAGE:
+  puts("Usage: p EXPR");
+  return 1;
+}
+
 static int cmd_x(char* args) {
   char* nstr = strtok(NULL, " ");
   if (nstr == NULL) goto L_CMD_X_USAGE;
   int n = atoi(nstr);
 
-  char* expr = strtok(NULL, " ");
-  if (expr == NULL) goto L_CMD_X_USAGE;
+  char* e = strtok(NULL, " ");
+  if (e == NULL) goto L_CMD_X_USAGE;
   vaddr_t addr;
-  sscanf(expr, "%x", &addr);
+  sscanf(e, "%x", &addr);
 
   for (int i = 0; i < n; ++i) {
     printf("0x%08x: 0x%08x 0x%08x 0x%08x 0x%08x\n", addr, vaddr_read(addr, 4),
