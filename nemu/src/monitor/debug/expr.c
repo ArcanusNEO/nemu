@@ -261,6 +261,7 @@ stack_code(Token*, post);
 stack_code(int64_t, integer);
 
 int64_t readnum(Token* tk) {
+  if (tk == NULL || tk->str == NULL) return 0;
   int64_t ans = 0;
   switch (tk->type) {
     case TK_DEC : sscanf(tk->str, "%" SCNd64, &ans); break;
@@ -296,6 +297,7 @@ uint32_t expr(char* e, bool* success) {
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
+  integer_clear();
 
   for (int i = 0; i < nr_token; ++i) {
     if (token_num(post_v[i]->type)) integer_push(readnum(post_v[i]));
@@ -331,7 +333,7 @@ uint32_t expr(char* e, bool* success) {
     }
   }
 
-  ret = (uint32_t) ans;
+  ret = (uint32_t) integer_pop();
   *success = true;
 
 L_EXPR_RELEASE:
@@ -340,7 +342,7 @@ L_EXPR_RELEASE:
   op_i = 0;
   post_i = 0;
   for (int i = 0; i < nr_token; ++i) {
-    if (tokens[i]) free(tokens[i]);
+    free(tokens[i]);
     tokens[i] = NULL;
     num_v[i] = NULL;
     op_v[i] = NULL;
