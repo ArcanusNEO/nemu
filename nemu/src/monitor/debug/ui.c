@@ -14,7 +14,6 @@ void cpu_exec(uint64_t);
 Call readline and add_history, return the line read
 */
 char* rl_gets() {
-  puts("1");
   static char* line_read = NULL;
 
   if (line_read) {
@@ -23,6 +22,8 @@ char* rl_gets() {
   }
 
   line_read = readline("(nemu) ");
+
+  printf("%p", line_read);
 
   if (line_read && *line_read) {
     add_history(line_read);
