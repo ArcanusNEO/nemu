@@ -333,14 +333,16 @@ uint32_t expr(char* e, bool* success) {
       // ) 20
       // + 5
       // * 4
-      while (!op_empty() &&
-        token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
-        !(token_mono(op_top()->type) && token_mono(tokens[i]->type)))
-        post_push(op_pop());
+      if (!token_left_brace(tokens[i]->type)) {
+        while (!op_empty() &&
+          token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
+          !(token_mono(op_top()->type) && token_mono(tokens[i]->type)))
+          post_push(op_pop());
 
-      if (!op_empty() && token_brace_match(op_top()->type, tokens[i]->type)) {
-        op_pop();
-        continue;
+        if (!op_empty() && token_brace_match(op_top()->type, tokens[i]->type)) {
+          op_pop();
+          continue;
+        }
       }
       op_push(tokens[i]);
     }
