@@ -3,6 +3,25 @@
 
 #include "common.h"
 
+extern const char* regsl[];
+extern const char* regsw[];
+extern const char* regsb[];
+
+#define ALPHABET_ORDER(ch)                        \
+  (((ch) >= 'A' && (ch) <= 'Z')    ? (ch) - 'A' : \
+      ((ch) >= 'a' && (ch) <= 'z') ? (ch) - 'a' : \
+                                     -1)
+
+#define REG_NAME_HASH(str)                                                   \
+  (str == NULL || ALPHABET_ORDER(str[0]) < 0 || ALPHABET_ORDER(str[1]) < 0 ? \
+      -1 :                                                                   \
+      ALPHABET_ORDER(str[2]) < 0 ?                                           \
+      ALPHABET_ORDER(str[1]) * 19 + ALPHABET_ORDER(str[0]) :                 \
+      ALPHABET_ORDER(str[2]) * 19 + ALPHABET_ORDER(str[1]) + 442) +          \
+    1
+
+int a[ALPHABET_ORDER('g')];
+
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 
 enum { R_AX, R_CX, R_DX, R_BX, R_SP, R_BP, R_SI, R_DI };
@@ -54,10 +73,6 @@ static inline int check_reg_index(int index) {
 #define reg_l(index) (cpu.gpr[check_reg_index(index)]._32)
 #define reg_w(index) (cpu.gpr[check_reg_index(index)]._16)
 #define reg_b(index) (cpu.gpr[check_reg_index(index) & 0x3]._8[index >> 2])
-
-extern const char* regsl[];
-extern const char* regsw[];
-extern const char* regsb[];
 
 static inline const char* reg_name(int index, int width) {
   assert(index >= 0 && index < 8);
