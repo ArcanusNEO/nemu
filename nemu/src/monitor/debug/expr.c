@@ -423,8 +423,6 @@ L_EXPR_FOR_END:
   ret = (uint32_t) num_top();
   if (success) *success = true;
 
-  Log("%d", 1);
-
 L_EXPR_RELEASE:
   nr_token = 0;
   op_pool_i = op_pool;
