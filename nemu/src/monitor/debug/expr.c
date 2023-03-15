@@ -310,12 +310,21 @@ uint32_t expr(char* e, bool* success) {
     else {
       while (!op_empty() &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
-        !(token_mono(op_top()->type) && token_mono(tokens[i]->type)))
+        !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
+        if (token_priority[op_top()->type] == 1 &&
+          token_priority[tokens[i]->type] == 1) {
+          op_pop();
+          goto L_EXPR_FOR_END;
+        }
         post_push(op_pop());
+      }
       op_push(tokens[i]);
     }
+L_EXPR_FOR_END:;
   }
   while (!op_empty()) post_push(op_pop());
+
+  // postfix expression constructed
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
@@ -328,7 +337,7 @@ uint32_t expr(char* e, bool* success) {
     // else Log("%d", post_v[i]->type);
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
-      if (token_priority[post_v[i]->type] == 0) break;
+      if (token_priority[post_v[i]->type] <= 1) break;
       if (token_mono(post_v[i]->type)) {
         ans = x = num_pop();
         switch (post_v[i]->type) {
