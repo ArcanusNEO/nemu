@@ -33,8 +33,8 @@ enum {
 };
 
 static int token_priority[] = {['\0'] = 0,
-  ['('] = 1,
-  [')'] = 1,
+  ['('] = INT_MAX,
+  [')'] = INT_MAX,
 
   ['!'] = 2,
   [TK_POS] = 2,
@@ -311,8 +311,8 @@ uint32_t expr(char* e, bool* success) {
       while (!op_empty() &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
         !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
-        if (token_priority[op_top()->type] == 1 &&
-          token_priority[tokens[i]->type] == 1) {
+        if (token_priority[op_top()->type] == INT_MAX &&
+          token_priority[tokens[i]->type] == INT_MAX) {
           op_pop();
           goto L_EXPR_FOR_END;
         }
@@ -327,7 +327,7 @@ L_EXPR_FOR_END:
     if (token_priority[op_top()->type] == 1) op_pop();
     else post_push(op_pop());
   }
-  
+
   // postfix expression constructed
 
   int64_t ans = 0;
@@ -341,7 +341,9 @@ L_EXPR_FOR_END:
     else Log("%d", post_v[i]->type);
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
-      if (token_priority[post_v[i]->type] <= 1) break;
+      if (token_priority[post_v[i]->type] <= 0 ||
+        token_priority[post_v[i]->type] == INT_MAX)
+        break;
       if (token_mono(post_v[i]->type)) {
         ans = x = num_pop();
         switch (post_v[i]->type) {
