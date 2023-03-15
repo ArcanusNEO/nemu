@@ -323,7 +323,13 @@ uint32_t expr(char* e, bool* success) {
           case '!' : ans = !x; break;
           case TK_POS : ans = +x; break;
           case TK_NEG : ans = -x; break;
-          case TK_DEREF : ans = vaddr_read((vaddr_t) x, 4); break;
+          case TK_DEREF :
+            if ((vaddr_t) x >= PMEM_SIZE) {
+              Log("Illegal memory access at 0x%08x", (vaddr_t) x);
+              goto L_EXPR_RELEASE;
+            }
+            ans = vaddr_read((vaddr_t) x, 4);
+            break;
           case '~' : ans = ~x; break;
           default : break;
         }

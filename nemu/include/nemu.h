@@ -5,4 +5,6 @@
 #include "memory/memory.h"
 #include "cpu/reg.h"
 
+#define PMEM_SIZE (128 * 1024 * 1024)
+
 #endif
