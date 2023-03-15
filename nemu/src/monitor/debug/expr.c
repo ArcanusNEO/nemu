@@ -323,8 +323,11 @@ uint32_t expr(char* e, bool* success) {
 L_EXPR_FOR_END:
     NULL;
   }
-  while (!op_empty()) post_push(op_pop());
-
+  while (!op_empty()) {
+    if (token_priority[op_top()->type] == 1) op_pop();
+    else post_push(op_pop());
+  }
+  
   // postfix expression constructed
 
   int64_t ans = 0;
