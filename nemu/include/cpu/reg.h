@@ -19,13 +19,12 @@ extern void* regp[];
 
 #define REG_32(str) (alphabet_order((str)[2]) > 0)
 
-#define REG_16(str)                          \
-  (alphabet_order((str)[2]) == '\0' &&       \
-    alphabet_order((str)[1]) != 'L' - 'A' && \
+#define REG_16(str)                                             \
+  ((str)[2] == '\0' && alphabet_order((str)[1]) != 'L' - 'A' && \
     alphabet_order((str)[1]) != 'H' - 'A')
 
-#define REG_8(str)                           \
-  (alphabet_order((str)[2]) == '\0' &&        \
+#define REG_8(str)                            \
+  ((str)[2] == '\0' &&                        \
     (alphabet_order((str)[1]) == 'L' - 'A' || \
       alphabet_order((str)[1]) == 'H' - 'A'))
 
