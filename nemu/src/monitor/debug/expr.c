@@ -268,7 +268,7 @@ stack_code(int64_t, num);
 
 static int64_t readvar(Token* tk) {
   if (tk == NULL) return 0;
-  int64_t ans = 0;
+  int64_t ans = 0xdeadbeef;
   char* s;
 
   switch (tk->type) {
