@@ -147,14 +147,26 @@ static int cmd_info(char* args) {
       printf("si\t0x%04x\t%d\n", reg_w_unsafe(R_SI), reg_w_unsafe(R_SI));
       printf("di\t0x%04x\t%d\n", reg_w_unsafe(R_DI), reg_w_unsafe(R_DI));
 
-      printf("al\t0x%02x\t%d\n", reg_b_unsafe(R_AL), reg_b_unsafe(R_AL));
-      printf("cl\t0x%02x\t%d\n", reg_b_unsafe(R_CL), reg_b_unsafe(R_CL));
-      printf("dl\t0x%02x\t%d\n", reg_b_unsafe(R_DL), reg_b_unsafe(R_DL));
-      printf("bl\t0x%02x\t%d\n", reg_b_unsafe(R_BL), reg_b_unsafe(R_BL));
-      printf("ah\t0x%02x\t%d\n", reg_b_unsafe(R_AH), reg_b_unsafe(R_AH));
-      printf("ch\t0x%02x\t%d\n", reg_b_unsafe(R_CH), reg_b_unsafe(R_CH));
-      printf("dh\t0x%02x\t%d\n", reg_b_unsafe(R_DH), reg_b_unsafe(R_DH));
-      printf("bh\t0x%02x\t%d\n", reg_b_unsafe(R_BH), reg_b_unsafe(R_BH));
+      printf(
+        "ah\t0x%02x\t%d\t"
+        "al\t0x%02x\t%d\n",
+        reg_b_unsafe(R_AH), reg_b_unsafe(R_AH), reg_b_unsafe(R_AL),
+        reg_b_unsafe(R_AL));
+      printf(
+        "ch\t0x%02x\t%d\t"
+        "cl\t0x%02x\t%d\n",
+        reg_b_unsafe(R_CH), reg_b_unsafe(R_CH), reg_b_unsafe(R_CL),
+        reg_b_unsafe(R_CL));
+      printf(
+        "dh\t0x%02x\t%d\t"
+        "dl\t0x%02x\t%d\n",
+        reg_b_unsafe(R_DH), reg_b_unsafe(R_DH), reg_b_unsafe(R_DL),
+        reg_b_unsafe(R_DL));
+      printf(
+        "bh\t0x%02x\t%d\t"
+        "bl\t0x%02x\t%d\n",
+        reg_b_unsafe(R_BH), reg_b_unsafe(R_BH), reg_b_unsafe(R_BL),
+        reg_b_unsafe(R_BL));
 
       break;
     case 'w' : break;
