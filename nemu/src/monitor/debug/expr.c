@@ -311,7 +311,6 @@ uint32_t expr(char* e, bool* success) {
     else {
       if (token_priority[post_v[i]->type] == 0) break;
       if (token_mono(post_v[i]->type)) {
-        // type == '!' || type == TK_POS || type == TK_NEG || type == TK_DEREF;
         ans = x = num_pop();
         switch (post_v[i]->type) {
           case '!' : ans = !x; break;
