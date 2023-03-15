@@ -24,6 +24,7 @@ enum {
 
   TK_DEC,
   TK_HEX,
+  TK_OCT,
   TK_REG,
 
   TK_DEREF,
@@ -64,7 +65,6 @@ static int token_priority[] = {['\0'] = 0,
   ['|'] = 11,
 
   [TK_LAND] = 12,
-
   [TK_LOR] = 13};
 
 static struct rule {
@@ -76,32 +76,33 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {          "\\s+", TK_NOTYPE}, // empty
-  {            "==",     TK_EQ}, // equal to
-  {            "!=",   TK_UNEQ}, // unequal to
-  {        "\\|\\|",    TK_LOR}, // logical or
-  {            "&&",   TK_LAND}, // logical and
-  {            "<<",     TK_SL}, // bitwise shift left
-  {            ">>",     TK_SR}, // bitwise shift right
-  {            "<=",     TK_LE}, // less than or equal to
-  {            ">=",     TK_GE}, // greater than or equal to
-  {             "<",       '<'}, // less than
-  {             ">",       '>'}, // greater than
-  {             "&",       '&'}, // bitwise and
-  {           "\\^",       '^'}, // bitwise xor
-  {           "\\|",       '|'}, // bitwise or
-  {           "\\+",       '+'}, // plus & positive
-  {             "-",       '-'}, // minus & negative
-  {           "\\*",       '*'}, // multiplication & dereference
-  {             "/",       '/'}, // division
-  {             "%",       '%'}, // modulo
-  {             "!",       '!'}, // logical not
-  {             "~",       '~'}, // bitwise flip
-  {           "\\(",       '('}, // left brace
-  {           "\\)",       ')'}, // right brace
-  {  "\\$[a-zA-Z]+",    TK_REG}, // register
-  {"0x[0-9a-fA-F]+",    TK_HEX}, // hexadecimal
-  {        "[0-9]+",    TK_DEC}, // decimal
+  {             "\\s+", TK_NOTYPE}, // empty
+  {               "==",     TK_EQ}, // equal to
+  {               "!=",   TK_UNEQ}, // unequal to
+  {           "\\|\\|",    TK_LOR}, // logical or
+  {               "&&",   TK_LAND}, // logical and
+  {               "<<",     TK_SL}, // bitwise shift left
+  {               ">>",     TK_SR}, // bitwise shift right
+  {               "<=",     TK_LE}, // less than or equal to
+  {               ">=",     TK_GE}, // greater than or equal to
+  {                "<",       '<'}, // less than
+  {                ">",       '>'}, // greater than
+  {                "&",       '&'}, // bitwise and
+  {              "\\^",       '^'}, // bitwise xor
+  {              "\\|",       '|'}, // bitwise or
+  {              "\\+",       '+'}, // plus & positive
+  {                "-",       '-'}, // minus & negative
+  {              "\\*",       '*'}, // multiplication & dereference
+  {                "/",       '/'}, // division
+  {                "%",       '%'}, // modulo
+  {                "!",       '!'}, // logical not
+  {                "~",       '~'}, // bitwise flip
+  {              "\\(",       '('}, // left brace
+  {              "\\)",       ')'}, // right brace
+  {     "\\$[a-zA-Z]+",    TK_REG}, // register
+  {"0[xX][0-9a-fA-F]+",    TK_HEX}, // hexadecimal
+  {      "[1-9][0-9]+",    TK_DEC}, // decimal
+  {          "0[0-9]+",    TK_OCT}, // cctal
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -200,6 +201,7 @@ static bool make_token(char* e) {
           case_var(TK_REG);
           case_var(TK_HEX);
           case_var(TK_DEC);
+          case_var(TK_OCT);
           default : break;
         }
         break;
@@ -215,7 +217,7 @@ static bool make_token(char* e) {
 }
 
 static true_inline bool token_var(int type) {
-  return type == TK_REG || type == TK_HEX || type == TK_DEC;
+  return type == TK_REG || type == TK_HEX || type == TK_DEC || type == TK_OCT;
 }
 
 static true_inline bool token_mono(int type) {
@@ -269,6 +271,7 @@ int64_t readvar(Token* tk) {
   switch (tk->type) {
     case TK_DEC : sscanf(tk->str, "%" SCNd64, &ans); break;
     case TK_HEX : sscanf(tk->str, "%" SCNx64, &ans); break;
+    case TK_OCT : sscanf(tk->str, "%" SCNo64, &ans); break;
     case TK_REG : TODO(); break;
     default : break;
   }
