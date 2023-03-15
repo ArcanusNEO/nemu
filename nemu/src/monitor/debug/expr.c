@@ -285,7 +285,6 @@ uint32_t expr(char* e, bool* success) {
       op_push(tokens[i]);
     }
   }
-
   while (!op_empty()) post_push(op_pop());
 
   int64_t ans = 0;
