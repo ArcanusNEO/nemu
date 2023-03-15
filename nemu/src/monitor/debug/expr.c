@@ -269,9 +269,32 @@ int64_t readvar(Token* tk) {
   return ans;
 }
 
+static int expr_helper() {
+  if (var_size() == 0) return 1;
+  if (post_empty()) {
+    if (var_size() == 1) {
+      post_push(var_pop());
+      while (!op_empty()) post_push(op_pop());
+    } else {
+      Token* tmp = var_pop();
+      post_push(var_pop());
+      post_push(tmp);
+      while (!op_empty() && token_mono(op_top()->type)) post_push(op_pop());
+      if (op_empty()) return 1;
+      post_push(op_pop());
+    }
+  } else {
+    post_push(var_pop());
+    while (!op_empty() && token_mono(op_top()->type)) post_push(op_pop());
+    if (op_empty()) return 1;
+    post_push(op_pop());
+  }
+  return 0;
+}
+
 uint32_t expr(char* e, bool* success) {
   uint32_t ret = 0;
-  *success = false;
+  if (success) *success = false;
   if (!make_token(e)) goto L_EXPR_RELEASE;
 
   /* TODO: Insert codes to evaluate the expression. */
@@ -288,35 +311,19 @@ uint32_t expr(char* e, bool* success) {
     else {
       // + 5
       // * 4
+      // N 2
       while (!op_empty() &&
-        token_priority[op_top()->type] <= token_priority[tokens[i]->type]) {
-        if (post_empty() && !token_mono(op_top()->type)) {
-          Token* tmp = var_pop();
-          post_push(var_pop());
-          post_push(tmp);
-          post_push(op_pop());
-        } else {
-          post_push(var_pop());
-          post_push(op_pop());
-        }
-      }
+        (token_priority[op_top()->type] <= token_priority[tokens[i]->type] ||
+          (token_mono(op_top()->type) && token_mono(tokens[i]->type))))
+        if (expr_helper()) goto L_EXPR_RELEASE;
       op_push(tokens[i]);
     }
   }
 
-  while (!var_empty() && !op_empty()) {
-    if (post_empty() && !token_mono(op_top()->type)) {
-      Token* tmp = var_pop();
-      post_push(var_pop());
-      post_push(tmp);
-      post_push(op_pop());
-    } else {
-      post_push(var_pop());
-      post_push(op_pop());
-    }
-  }
+  while (!op_empty())
+    if (expr_helper()) goto L_EXPR_RELEASE;
 
-  if (!var_empty() || !op_empty()) goto L_EXPR_RELEASE;
+  if (!var_empty()) goto L_EXPR_RELEASE;
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
@@ -361,7 +368,7 @@ uint32_t expr(char* e, bool* success) {
   }
 
   ret = (uint32_t) num_pop();
-  *success = true;
+  if (success) *success = true;
 
 L_EXPR_RELEASE:
   nr_token = 0;
