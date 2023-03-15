@@ -19,6 +19,8 @@ void* regp[] = {
   [REG_NAME_HASH("esi")] = &cpu.esi,
   [REG_NAME_HASH("edi")] = &cpu.edi,
 
+  [REG_NAME_HASH("eip")] = &cpu.eip,
+
   [REG_NAME_HASH("ax")] = &reg_w_unsafe(R_AX),
   [REG_NAME_HASH("cx")] = &reg_w_unsafe(R_CX),
   [REG_NAME_HASH("dx")] = &reg_w_unsafe(R_DX),
