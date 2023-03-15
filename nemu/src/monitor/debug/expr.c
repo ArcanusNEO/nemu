@@ -276,6 +276,7 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('-', TK_NEG);
   map_tokens_mono_op('+', TK_POS);
 
+  
   for (int i = 0; i < nr_token; ++i) {
     if (token_var(tokens[i]->type)) post_push(tokens[i]);
     else {
@@ -291,7 +292,8 @@ uint32_t expr(char* e, bool* success) {
   int64_t x = 0, y = 0;
   num_clear();
 
-  for (int i = 0; i < nr_token; ++i) {
+  int i;
+  for (i = 0; i < nr_token; ++i) {
     if (token_var(post_v[i]->type)) Log("%s", post_v[i]->str);
     else if (post_v[i]->type < 256) Log("%c", post_v[i]->type);
     else Log("%d", post_v[i]->type);
@@ -329,7 +331,7 @@ uint32_t expr(char* e, bool* success) {
     }
   }
 
-  if (num_size() != 1) goto L_EXPR_RELEASE;
+  if (num_size() != 1 || i != nr_token) goto L_EXPR_RELEASE;
 
   ret = (uint32_t) num_pop();
   if (success) *success = true;
