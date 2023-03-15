@@ -33,8 +33,7 @@ enum {
 };
 
 static int token_priority[] = {['\0'] = 0,
-  ['('] = INT_MAX,
-  [')'] = INT_MAX,
+  ['('] = 1,
 
   ['!'] = 2,
   [TK_POS] = 2,
@@ -65,7 +64,9 @@ static int token_priority[] = {['\0'] = 0,
   ['|'] = 11,
 
   [TK_LAND] = 12,
-  [TK_LOR] = 13};
+  [TK_LOR] = 13,
+
+  [')'] = 20};
 
 static struct rule {
   char* regex;
@@ -325,7 +326,9 @@ uint32_t expr(char* e, bool* success) {
 
   for (int i = 0; i < nr_token; ++i) {
     if (token_var(tokens[i]->type)) post_push(tokens[i]);
-    else {
+    else {  // + 5
+            // * 4
+            // () 20
       while (!op_empty() &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
         !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
