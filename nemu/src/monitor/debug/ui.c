@@ -97,8 +97,9 @@ static int cmd_x(char* args) {
 
   char* e = strtok(NULL, " ");
   if (e == NULL) goto L_CMD_X_USAGE;
-  vaddr_t addr;
-  sscanf(e, "%x", &addr);
+  bool res;
+  vaddr_t addr = expr(e, &res);
+  if (!res) goto L_CMD_X_USAGE;
 
   for (int i = 0; i < n; ++i) {
     printf("0x%08x: 0x%08x 0x%08x 0x%08x 0x%08x\n", addr, vaddr_read(addr, 4),
@@ -109,7 +110,7 @@ static int cmd_x(char* args) {
   return 0;
 
 L_CMD_X_USAGE:
-  puts("Usage: x N HEX");
+  puts("Usage: x N EXPR");
   return 1;
 }
 
