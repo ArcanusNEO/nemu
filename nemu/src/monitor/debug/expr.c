@@ -280,7 +280,7 @@ static int64_t readvar(Token* tk) {
       if (s[0] <= ' ' || s[1] <= ' ' ||
         (!REG_32(s) && !REG_16(s) && !REG_8(s)) ||
         regp[REG_NAME_HASH(s)] == NULL) {
-        puts(s);
+        ans = (int64_t) (*(uint16_t*) regp[REG_NAME_HASH(s)]);
         break;
       }
       if (REG_32(s)) ans = (int64_t) (*(uint32_t*) regp[REG_NAME_HASH(s)]);
