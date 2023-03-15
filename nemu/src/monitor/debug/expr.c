@@ -131,7 +131,7 @@ typedef struct token {
   char str[0];
 } Token;
 
-#define TKOEN_V_SZ 32
+#define TKOEN_V_SZ 512
 
 Token op_pool[TKOEN_V_SZ];
 Token* op_pool_i = op_pool;
