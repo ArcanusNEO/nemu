@@ -113,11 +113,10 @@ static regex_t re[NR_REGEX];
  * Therefore we compile them only once before any usage.
  */
 void init_regex() {
-  int i;
   char error_msg[128];
   int ret;
 
-  for (i = 0; i < NR_REGEX; i++) {
+  for (size_t i = 0; i < NR_REGEX; i++) {
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
