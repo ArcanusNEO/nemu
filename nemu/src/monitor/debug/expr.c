@@ -342,11 +342,17 @@ uint32_t expr(char* e, bool* success) {
           case '-' : ans = x - y; break;
           case '*' : ans = x * y; break;
           case '/' :
-            if (y == 0) goto L_EXPR_RELEASE;
+            if (y == 0) {
+              Log("Invalid division expression: %lld ÷ 0", x);
+              goto L_EXPR_RELEASE;
+            }
             ans = x / y;
             break;
           case '%' :
-            if (y == 0) goto L_EXPR_RELEASE;
+            if (y == 0) {
+              Log("Invalid division expression: %lld mod 0", x);
+              goto L_EXPR_RELEASE;
+            }
             ans = x % y;
             break;
           default : break;
