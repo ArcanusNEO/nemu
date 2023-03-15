@@ -333,9 +333,9 @@ L_EXPR_FOR_END:
 
   int i;
   for (i = 0; i < nr_token; ++i) {
-    // if (token_var(post_v[i]->type)) Log("%s", post_v[i]->str);
-    // else if (post_v[i]->type < 256) Log("%c", post_v[i]->type);
-    // else Log("%d", post_v[i]->type);
+    if (token_var(post_v[i]->type)) Log("%s", post_v[i]->str);
+    else if (post_v[i]->type < 256) Log("%c", post_v[i]->type);
+    else Log("%d", post_v[i]->type);
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
       if (token_priority[post_v[i]->type] <= 1) break;
