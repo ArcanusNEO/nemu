@@ -9,15 +9,18 @@
 
 enum {
   TK_NOTYPE = 256,
-  TK_EQ,
 
-  /* TODO: Add more token types */
-  TK_UNEQ,
   TK_LAND,
   TK_LOR,
 
   TK_SL,
   TK_SR,
+
+  TK_LE,
+  TK_GE,
+
+  TK_EQ,
+  TK_UNEQ,
 
   TK_DEC,
   TK_HEX,
@@ -47,6 +50,11 @@ static int token_priority[] = {['\0'] = 0,
   [TK_SL] = 6,
   [TK_SR] = 6,
 
+  ['<'] = 7,
+  ['>'] = 7,
+  [TK_LE] = 7,
+  [TK_GE] = 7,
+
   [TK_EQ] = 8,
   [TK_UNEQ] = 8,
 
@@ -67,13 +75,17 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {          "\\s+", TK_NOTYPE}, // spaces
-  {            "==",     TK_EQ}, // equal
-  {            "!=",   TK_UNEQ}, // unequal
+  {          "\\s+", TK_NOTYPE}, // empty
+  {            "==",     TK_EQ}, // equal to
+  {            "!=",   TK_UNEQ}, // unequal to
   {        "\\|\\|",    TK_LOR}, // logical or
   {            "&&",   TK_LAND}, // logical and
   {            "<<",     TK_SL}, // bit shift left
   {            ">>",     TK_SR}, // bit shift right
+  {            "<=",     TK_LE}, // less than or equal to
+  {            ">=",     TK_GE}, // greater than or equal to
+  {             "<",       '<'}, // less than
+  {             ">",       '>'}, // greater than
   {             "&",       '&'}, // bit and
   {           "\\^",       '^'}, // bit xor
   {           "\\|",       '|'}, // bit or
@@ -167,6 +179,10 @@ static bool make_token(char* e) {
           case_op(TK_LAND);
           case_op(TK_SL);
           case_op(TK_SR);
+          case_op(TK_LE);
+          case_op(TK_GE);
+          case_op('<');
+          case_op('>');
           case_op('&');
           case_op('^');
           case_op('|');
@@ -310,6 +326,10 @@ uint32_t expr(char* e, bool* success) {
           case TK_LAND : ans = x && y; break;
           case TK_SL : ans = x << y; break;
           case TK_SR : ans = x >> y; break;
+          case TK_LE : ans = x <= y; break;
+          case TK_GE : ans = x >= y; break;
+          case '<' : ans = x < y; break;
+          case '>' : ans = x > y; break;
           case '&' : ans = x & y; break;
           case '^' : ans = x ^ y; break;
           case '|' : ans = x | y; break;
