@@ -274,7 +274,15 @@ static int64_t readvar(Token* tk) {
     case TK_DEC : sscanf(tk->str, "%" SCNd64, &ans); break;
     case TK_HEX : sscanf(tk->str, "%" SCNx64, &ans); break;
     case TK_OCT : sscanf(tk->str, "%" SCNo64, &ans); break;
-    case TK_REG : TODO(); break;
+    case TK_REG :
+      if (tk->str[0] <= ' ' || tk->str[1] <= ' ') break;
+      if (REG_32(tk->str))
+        ans = (int64_t) (*(uint32_t*) regp[REG_NAME_HASH(tk->str)]);
+      else if (REG_16(tk->str))
+        ans = (int64_t) (*(uint16_t*) regp[REG_NAME_HASH(tk->str)]);
+      else if (REG_8(tk->str))
+        ans = (int64_t) (*(uint8_t*) regp[REG_NAME_HASH(tk->str)]);
+      break;
     default : break;
   }
   return ans;

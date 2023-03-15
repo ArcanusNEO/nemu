@@ -4,10 +4,39 @@
 
 CPU_state cpu;
 
-const char* regsl[] = {
-  "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
+const char* regsl[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"};
 const char* regsw[] = {"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"};
 const char* regsb[] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"};
+
+void* regp[] = {
+  [0] = NULL,
+  [REG_NAME_HASH("eax")] = &cpu.eax,
+  [REG_NAME_HASH("ecx")] = &cpu.ecx,
+  [REG_NAME_HASH("edx")] = &cpu.edx,
+  [REG_NAME_HASH("ebx")] = &cpu.ebx,
+  [REG_NAME_HASH("esp")] = &cpu.esp,
+  [REG_NAME_HASH("ebp")] = &cpu.ebp,
+  [REG_NAME_HASH("esi")] = &cpu.esi,
+  [REG_NAME_HASH("edi")] = &cpu.edi,
+
+  [REG_NAME_HASH("ax")] = &reg_w_unsafe(R_AX),
+  [REG_NAME_HASH("cx")] = &reg_w_unsafe(R_CX),
+  [REG_NAME_HASH("dx")] = &reg_w_unsafe(R_DX),
+  [REG_NAME_HASH("bx")] = &reg_w_unsafe(R_BX),
+  [REG_NAME_HASH("sp")] = &reg_w_unsafe(R_SP),
+  [REG_NAME_HASH("bp")] = &reg_w_unsafe(R_BP),
+  [REG_NAME_HASH("si")] = &reg_w_unsafe(R_SI),
+  [REG_NAME_HASH("di")] = &reg_w_unsafe(R_DI),
+
+  [REG_NAME_HASH("al")] = &reg_b_unsafe(R_AL),
+  [REG_NAME_HASH("cl")] = &reg_b_unsafe(R_CL),
+  [REG_NAME_HASH("dl")] = &reg_b_unsafe(R_DL),
+  [REG_NAME_HASH("bl")] = &reg_b_unsafe(R_BL),
+  [REG_NAME_HASH("ah")] = &reg_b_unsafe(R_AH),
+  [REG_NAME_HASH("ch")] = &reg_b_unsafe(R_CH),
+  [REG_NAME_HASH("dh")] = &reg_b_unsafe(R_DH),
+  [REG_NAME_HASH("bh")] = &reg_b_unsafe(R_BH),
+};
 
 void reg_test() {
   srand(time(0));

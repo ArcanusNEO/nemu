@@ -7,20 +7,32 @@ extern const char* regsl[];
 extern const char* regsw[];
 extern const char* regsb[];
 
+extern void* regp[];
+
 #define ALPHABET_ORDER(ch)                        \
   (((ch) >= 'A' && (ch) <= 'Z')    ? (ch) - 'A' : \
       ((ch) >= 'a' && (ch) <= 'z') ? (ch) - 'a' : \
                                      -1)
 
-#define REG_NAME_HASH(str)                                                   \
-  (str == NULL || ALPHABET_ORDER(str[0]) < 0 || ALPHABET_ORDER(str[1]) < 0 ? \
-      -1 :                                                                   \
-      ALPHABET_ORDER(str[2]) < 0 ?                                           \
-      ALPHABET_ORDER(str[1]) * 19 + ALPHABET_ORDER(str[0]) :                 \
-      ALPHABET_ORDER(str[2]) * 19 + ALPHABET_ORDER(str[1]) + 442) +          \
-    1
+#define REG_NAME_HASH(str)                                               \
+  ((ALPHABET_ORDER((str)[0]) < 0 || ALPHABET_ORDER((str)[1]) < 0 ?       \
+       -1 :                                                              \
+       ALPHABET_ORDER((str)[2]) < 0 ?                                    \
+       ALPHABET_ORDER((str)[1]) * 19 + ALPHABET_ORDER((str)[0]) :        \
+       ALPHABET_ORDER((str)[2]) * 19 + ALPHABET_ORDER((str)[1]) + 442) + \
+    1)
 
-int a[ALPHABET_ORDER('g')];
+#define REG_32(str) (ALPHABET_ORDER((str)[2]) > 0)
+
+#define REG_16(str)                          \
+  (ALPHABET_ORDER((str)[2]) == '\0' &&       \
+    ALPHABET_ORDER((str)[1]) != 'L' - 'A' && \
+    ALPHABET_ORDER((str)[1]) != 'H' - 'A')
+
+#define REG_8(str)                           \
+  (ALPHABET_ORDER((str)[2]) == '\0' &&        \
+    (ALPHABET_ORDER((str)[1]) == 'L' - 'A' || \
+      ALPHABET_ORDER((str)[1]) == 'H' - 'A'))
 
 enum { R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI };
 
@@ -72,7 +84,11 @@ static inline int check_reg_index(int index) {
 
 #define reg_l(index) (cpu.gpr[check_reg_index(index)]._32)
 #define reg_w(index) (cpu.gpr[check_reg_index(index)]._16)
-#define reg_b(index) (cpu.gpr[check_reg_index(index) & 0x3]._8[index >> 2])
+#define reg_b(index) (cpu.gpr[check_reg_index(index) & (0x3)]._8[(index) >> 2])
+
+#define reg_l_unsafe(index) (cpu.gpr[index]._32)
+#define reg_w_unsafe(index) (cpu.gpr[index]._16)
+#define reg_b_unsafe(index) (cpu.gpr[(index) & (0x3)]._8[(index) >> 2])
 
 static inline const char* reg_name(int index, int width) {
   assert(index >= 0 && index < 8);
