@@ -352,7 +352,7 @@ L_EXPR_FOR_END:
   num_clear();
 
   int i;
-  for (i = 0; i < nr_token; ++i) {
+  for (i = 0; i < post_size(); ++i) {
     if (token_var(post_v[i]->type)) Log("%s", post_v[i]->str);
     else if (post_v[i]->type < 256) Log("%c", post_v[i]->type);
     else Log("%d", post_v[i]->type);
