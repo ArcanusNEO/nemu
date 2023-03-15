@@ -75,8 +75,8 @@ static struct rule {
   {            "<<",     TK_SL}, // bit shift left
   {            ">>",     TK_SR}, // bit shift right
   {             "&",       '&'}, // bit and
-  {             "^",       '^'}, // bit xor
-  {             "|",       '|'}, // bit or
+  {           "\\^",       '^'}, // bit xor
+  {           "\\|",       '|'}, // bit or
   {           "\\+",       '+'}, // plus & positive
   {             "-",       '-'}, // minus & negative
   {           "\\*",       '*'}, // multiplication & dereference
