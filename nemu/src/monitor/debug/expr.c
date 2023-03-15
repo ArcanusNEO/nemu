@@ -320,7 +320,8 @@ uint32_t expr(char* e, bool* success) {
       }
       op_push(tokens[i]);
     }
-L_EXPR_FOR_END:;
+L_EXPR_FOR_END:
+    NULL;
   }
   while (!op_empty()) post_push(op_pop());
 
