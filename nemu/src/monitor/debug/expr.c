@@ -238,6 +238,10 @@ static true_inline bool token_brace(int type) {
   return token_left_brace(type) || token_right_brace(type);
 }
 
+static true_inline bool token_brace_match(int ty, int tz) {
+  return ty == '(' && tz == ')';
+}
+
 #define map_tokens_mono_op(src, dst)                   \
   do {                                                 \
     for (int i = 0; i < nr_token; ++i)                 \
@@ -325,8 +329,7 @@ uint32_t expr(char* e, bool* success) {
       while (!op_empty() &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
         !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
-        if (token_left_brace(op_top()->type) &&
-          token_right_brace(tokens[i]->type)) {
+        if (token_brace_match(op_top()->type, tokens[i]->type)) {
           op_pop();
           goto L_EXPR_FOR_END;
         }
@@ -355,8 +358,7 @@ L_EXPR_FOR_END:
     else Log("%d", post_v[i]->type);
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
-      if (token_priority[post_v[i]->type] <= 0 ||
-        token_brace(post_v[i]->type))
+      if (token_priority[post_v[i]->type] <= 0 || token_brace(post_v[i]->type))
         break;
       if (token_mono(post_v[i]->type)) {
         ans = x = num_pop();
