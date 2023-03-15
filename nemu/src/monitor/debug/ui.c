@@ -86,7 +86,6 @@ static int cmd_p(char* args) {
   return 0;
 
 L_CMD_P_ERROR:
-  puts("Bad syntax or divide by 0");
   puts("Usage: p EXPR");
   return 1;
 }
