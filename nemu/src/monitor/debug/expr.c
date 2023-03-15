@@ -328,8 +328,9 @@ uint32_t expr(char* e, bool* success) {
     if (token_var(tokens[i]->type)) post_push(tokens[i]);
     else {  // + 5
             // * 4
-            // () 20
-      while (!op_empty() &&
+            // ( 1
+            // ) 20
+      while (!op_empty() && !token_left_brace(op_top()->type) &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
         !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
         if (token_brace_match(op_top()->type, tokens[i]->type)) {
