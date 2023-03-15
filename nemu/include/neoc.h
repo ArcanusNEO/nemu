@@ -19,6 +19,11 @@
 #include <wchar.h>
 #include <wctype.h>
 
+#define alphabet_order(ch)                        \
+  (((ch) >= 'A' && (ch) <= 'Z')    ? (ch) - 'A' : \
+      ((ch) >= 'a' && (ch) <= 'z') ? (ch) - 'a' : \
+                                     -1)
+
 #define true_inline __attribute__((always_inline)) inline
 
 #define quote_helper(content) #content

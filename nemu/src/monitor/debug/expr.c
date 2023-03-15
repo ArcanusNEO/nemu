@@ -268,7 +268,7 @@ stack_code(Token*, post);
 stack_code(int64_t, num);
 
 static int64_t readvar(Token* tk) {
-  if (tk == NULL || tk->str == NULL) return 0;
+  if (tk == NULL) return 0;
   int64_t ans = 0;
   switch (tk->type) {
     case TK_DEC : sscanf(tk->str, "%" SCNd64, &ans); break;
