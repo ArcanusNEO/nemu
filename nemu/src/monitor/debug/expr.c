@@ -422,7 +422,7 @@ uint32_t expr(char* e, bool* success) {
         }
         num_push(ans);
       }
-      Log("%" PRId64, num_top());
+      printf("%" PRId64 "\n", num_top());
     }
   }
 
