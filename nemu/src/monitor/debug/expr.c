@@ -15,6 +15,10 @@ enum {
   TK_UNEQ,
   TK_LAND,
   TK_LOR,
+
+  TK_SL,
+  TK_SR,
+
   TK_DEC,
   TK_HEX,
   TK_REG,
@@ -40,8 +44,15 @@ static int token_priority[] = {['\0'] = 0,
   ['+'] = 5,
   ['-'] = 5,
 
+  [TK_SL] = 6,
+  [TK_SR] = 6,
+
   [TK_EQ] = 8,
   [TK_UNEQ] = 8,
+
+  ['&'] = 9,
+  ['^'] = 10,
+  ['|'] = 11,
 
   [TK_LAND] = 12,
 
@@ -61,6 +72,11 @@ static struct rule {
   {            "!=",   TK_UNEQ}, // unequal
   {        "\\|\\|",    TK_LOR}, // logical or
   {            "&&",   TK_LAND}, // logical and
+  {            "<<",     TK_SL}, // bit shift left
+  {            ">>",     TK_SR}, // bit shift right
+  {             "&",       '&'}, // bit and
+  {             "^",       '^'}, // bit xor
+  {             "|",       '|'}, // bit or
   {           "\\+",       '+'}, // plus & positive
   {             "-",       '-'}, // minus & negative
   {           "\\*",       '*'}, // multiplication & dereference
@@ -105,6 +121,20 @@ typedef struct token {
 Token* tokens[TKOEN_V_SZ];
 int nr_token;
 
+#define case_op(ch)                                  \
+  case (ch) :                                        \
+    tk = tokens[nr_token++] = malloc(sizeof(Token)); \
+    tk->type = (ch);                                 \
+    break;
+
+#define case_var(var)                                                 \
+  case (var) :                                                        \
+    tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1); \
+    tk->type = (var);                                                 \
+    strncpy(tk->str, substr_start, substr_len);                       \
+    tk->str[substr_len] = '\0';                                       \
+    break;
+
 static bool make_token(char* e) {
   int position = 0;
   int i;
@@ -131,73 +161,26 @@ static bool make_token(char* e) {
          */
         Token* tk = NULL;
         switch (rules[i].token_type) {
-          case TK_NOTYPE : break;
-          case TK_EQ :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = TK_EQ;
-            break;
-          case TK_UNEQ :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = TK_UNEQ;
-            break;
-          case TK_LOR :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = TK_LOR;
-            break;
-          case TK_LAND :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = TK_LAND;
-            break;
-          case '+' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '+';
-            break;
-          case '-' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '-';
-            break;
-          case '*' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '*';
-            break;
-          case '/' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '/';
-            break;
-          case '%' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '%';
-            break;
-          case '!' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '!';
-            break;
-          case '(' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = '(';
-            break;
-          case ')' :
-            tk = tokens[nr_token++] = malloc(sizeof(Token));
-            tk->type = ')';
-            break;
-          case TK_REG :
-            tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
-            tk->type = TK_REG;
-            strncpy(tk->str, substr_start, substr_len);
-            tk->str[substr_len] = '\0';
-            break;
-          case TK_HEX :
-            tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
-            tk->type = TK_HEX;
-            strncpy(tk->str, substr_start, substr_len);
-            tk->str[substr_len] = '\0';
-            break;
-          case TK_DEC :
-            tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1);
-            tk->type = TK_DEC;
-            strncpy(tk->str, substr_start, substr_len);
-            tk->str[substr_len] = '\0';
-            break;
+          case_op(TK_EQ);
+          case_op(TK_UNEQ);
+          case_op(TK_LOR);
+          case_op(TK_LAND);
+          case_op(TK_SL);
+          case_op(TK_SR);
+          case_op('&');
+          case_op('^');
+          case_op('|');
+          case_op('+');
+          case_op('-');
+          case_op('*');
+          case_op('/');
+          case_op('%');
+          case_op('!');
+          case_op('(');
+          case_op(')');
+          case_var(TK_REG);
+          case_var(TK_HEX);
+          case_var(TK_DEC);
           default : break;
         }
         break;
@@ -325,6 +308,11 @@ uint32_t expr(char* e, bool* success) {
           case TK_UNEQ : ans = x != y; break;
           case TK_LOR : ans = x || y; break;
           case TK_LAND : ans = x && y; break;
+          case TK_SL : ans = x << y; break;
+          case TK_SR : ans = x >> y; break;
+          case '&' : ans = x & y; break;
+          case '^' : ans = x ^ y; break;
+          case '|' : ans = x | y; break;
           case '+' : ans = x + y; break;
           case '-' : ans = x - y; break;
           case '*' : ans = x * y; break;
