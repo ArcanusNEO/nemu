@@ -39,6 +39,7 @@ static int token_priority[] = {['\0'] = 0,
   [TK_POS] = 2,
   [TK_NEG] = 2,
   [TK_DEREF] = 2,
+  ['~'] = 2,
 
   ['*'] = 4,
   ['/'] = 4,
@@ -80,21 +81,22 @@ static struct rule {
   {            "!=",   TK_UNEQ}, // unequal to
   {        "\\|\\|",    TK_LOR}, // logical or
   {            "&&",   TK_LAND}, // logical and
-  {            "<<",     TK_SL}, // bit shift left
-  {            ">>",     TK_SR}, // bit shift right
+  {            "<<",     TK_SL}, // bitwise shift left
+  {            ">>",     TK_SR}, // bitwise shift right
   {            "<=",     TK_LE}, // less than or equal to
   {            ">=",     TK_GE}, // greater than or equal to
   {             "<",       '<'}, // less than
   {             ">",       '>'}, // greater than
-  {             "&",       '&'}, // bit and
-  {           "\\^",       '^'}, // bit xor
-  {           "\\|",       '|'}, // bit or
+  {             "&",       '&'}, // bitwise and
+  {           "\\^",       '^'}, // bitwise xor
+  {           "\\|",       '|'}, // bitwise or
   {           "\\+",       '+'}, // plus & positive
   {             "-",       '-'}, // minus & negative
   {           "\\*",       '*'}, // multiplication & dereference
   {             "/",       '/'}, // division
   {             "%",       '%'}, // modulo
   {             "!",       '!'}, // logical not
+  {             "~",       '~'}, // bitwise flip
   {           "\\(",       '('}, // left brace
   {           "\\)",       ')'}, // right brace
   {  "\\$[a-zA-Z]+",    TK_REG}, // register
@@ -192,6 +194,7 @@ static bool make_token(char* e) {
           case_op('/');
           case_op('%');
           case_op('!');
+          case_op('~');
           case_op('(');
           case_op(')');
           case_var(TK_REG);
@@ -216,7 +219,8 @@ static true_inline bool token_var(int type) {
 }
 
 static true_inline bool token_mono(int type) {
-  return type == '!' || type == TK_POS || type == TK_NEG || type == TK_DEREF;
+  return type == '!' || type == TK_POS || type == TK_NEG || type == TK_DEREF ||
+    type == '~';
 }
 
 #define map_tokens_mono_op(src, dst)                 \
@@ -313,6 +317,7 @@ uint32_t expr(char* e, bool* success) {
           case TK_POS : ans = +x; break;
           case TK_NEG : ans = -x; break;
           case TK_DEREF : ans = vaddr_read((vaddr_t) x, 4); break;
+          case '~' : ans = ~x; break;
           default : break;
         }
         num_push(ans);
@@ -353,7 +358,7 @@ uint32_t expr(char* e, bool* success) {
 
   if (num_size() != 1 || i != nr_token) goto L_EXPR_RELEASE;
 
-  ret = (uint32_t) num_pop();
+  ret = (uint32_t) num_top();
   if (success) *success = true;
 
 L_EXPR_RELEASE:
