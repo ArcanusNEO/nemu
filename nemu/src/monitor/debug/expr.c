@@ -278,9 +278,12 @@ static int64_t readvar(Token* tk) {
     case TK_REG :
       s = tk->str + 1;
       if (s[0] <= ' ' || s[1] <= ' ') break;
-      if (REG_32(s)) ans = (int64_t) (*(uint32_t*) regp[REG_NAME_HASH(s)]);
-      else if (REG_16(s)) ans = (int64_t) (*(uint16_t*) regp[REG_NAME_HASH(s)]);
-      else if (REG_8(s)) ans = (int64_t) (*(uint8_t*) regp[REG_NAME_HASH(s)]);
+      if (REG_32(s) && regp[REG_NAME_HASH(s)])
+        ans = (int64_t) (*(uint32_t*) regp[REG_NAME_HASH(s)]);
+      else if (REG_16(s) && regp[REG_NAME_HASH(s)])
+        ans = (int64_t) (*(uint16_t*) regp[REG_NAME_HASH(s)]);
+      else if (REG_8(s) && regp[REG_NAME_HASH(s)])
+        ans = (int64_t) (*(uint8_t*) regp[REG_NAME_HASH(s)]);
       break;
     default : break;
   }
