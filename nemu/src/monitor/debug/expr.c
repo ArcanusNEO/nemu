@@ -366,7 +366,7 @@ uint32_t expr(char* e, bool* success) {
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
       if (token_priority[post_v[i]->type] <= 1 || token_brace(post_v[i]->type))
-        break;
+        continue;
       if (token_mono(post_v[i]->type)) {
         ans = x = num_pop();
         switch (post_v[i]->type) {
