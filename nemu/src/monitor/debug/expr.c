@@ -226,12 +226,26 @@ static true_inline bool token_mono(int type) {
     type == '~';
 }
 
-#define map_tokens_mono_op(src, dst)                 \
-  do {                                               \
-    for (int i = 0; i < nr_token; ++i)               \
-      if (tokens[i]->type == (src) &&                \
-        (i == 0 || !token_var(tokens[i - 1]->type))) \
-        tokens[i]->type = (dst);                     \
+static true_inline bool token_left_brace(int type) {
+  return type == '(';
+}
+
+static true_inline bool token_right_brace(int type) {
+  return type == '(';
+}
+
+static true_inline bool token_brace(int type) {
+  return token_left_brace(type) || token_right_brace(type);
+}
+
+#define map_tokens_mono_op(src, dst)                   \
+  do {                                                 \
+    for (int i = 0; i < nr_token; ++i)                 \
+      if (tokens[i]->type == (src) &&                  \
+        (i == 0 ||                                     \
+          (!token_var(tokens[i - 1]->type) &&          \
+            !token_right_brace(tokens[i - 1]->type)))) \
+        tokens[i]->type = (dst);                       \
   } while (0)
 
 Token* op_v[TKOEN_V_SZ];
@@ -311,8 +325,8 @@ uint32_t expr(char* e, bool* success) {
       while (!op_empty() &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
         !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
-        if (token_priority[op_top()->type] == INT_MAX &&
-          token_priority[tokens[i]->type] == INT_MAX) {
+        if (token_left_brace(op_top()->type) &&
+          token_right_brace(tokens[i]->type)) {
           op_pop();
           goto L_EXPR_FOR_END;
         }
@@ -324,7 +338,7 @@ L_EXPR_FOR_END:
     NULL;
   }
   while (!op_empty()) {
-    if (token_priority[op_top()->type] == 1) op_pop();
+    if (token_brace(op_top()->type)) op_pop();
     else post_push(op_pop());
   }
 
@@ -342,7 +356,7 @@ L_EXPR_FOR_END:
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
       if (token_priority[post_v[i]->type] <= 0 ||
-        token_priority[post_v[i]->type] == INT_MAX)
+        token_brace(post_v[i]->type))
         break;
       if (token_mono(post_v[i]->type)) {
         ans = x = num_pop();
