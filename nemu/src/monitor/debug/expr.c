@@ -133,13 +133,15 @@ typedef struct token {
 
 #define TKOEN_V_SZ 32
 
+Token op_pool[TKOEN_V_SZ];
+Token* op_pool_i = op_pool;
 Token* tokens[TKOEN_V_SZ];
 int nr_token;
 
-#define case_op(ch)                                  \
-  case (ch) :                                        \
-    tk = tokens[nr_token++] = malloc(sizeof(Token)); \
-    tk->type = (ch);                                 \
+#define case_op(ch)                        \
+  case (ch) :                              \
+    tk = tokens[nr_token++] = op_pool_i++; \
+    tk->type = (ch);                       \
     break;
 
 #define case_var(var)                                                 \
@@ -265,7 +267,7 @@ stack_code(Token*, op);
 stack_code(Token*, post);
 stack_code(int64_t, num);
 
-int64_t readvar(Token* tk) {
+static int64_t readvar(Token* tk) {
   if (tk == NULL || tk->str == NULL) return 0;
   int64_t ans = 0;
   switch (tk->type) {
@@ -287,6 +289,9 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('*', TK_DEREF);
   map_tokens_mono_op('-', TK_NEG);
   map_tokens_mono_op('+', TK_POS);
+
+  op_clear();
+  post_clear();
 
   for (int i = 0; i < nr_token; ++i) {
     if (token_var(tokens[i]->type)) post_push(tokens[i]);
@@ -372,10 +377,11 @@ uint32_t expr(char* e, bool* success) {
 
 L_EXPR_RELEASE:
   nr_token = 0;
+  op_pool_i = op_pool;
   op_i = 0;
   post_i = 0;
   for (int i = 0; i < nr_token; ++i) {
-    free(tokens[i]);
+    if (token_var(tokens[i]->type)) free(tokens[i]);
     tokens[i] = NULL;
     op_v[i] = NULL;
     post_v[i] = NULL;
