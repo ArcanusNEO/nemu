@@ -418,7 +418,7 @@ L_EXPR_FOR_END:
     }
   }
 
-  if (num_size() != 1 || i != nr_token) goto L_EXPR_RELEASE;
+  if (num_size() != 1 || i != post_size()) goto L_EXPR_RELEASE;
 
   ret = (uint32_t) num_top();
   if (success) *success = true;
