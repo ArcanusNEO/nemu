@@ -231,7 +231,7 @@ static true_inline bool token_left_brace(int type) {
 }
 
 static true_inline bool token_right_brace(int type) {
-  return type == '(';
+  return type == ')';
 }
 
 static true_inline bool token_brace(int type) {
