@@ -128,15 +128,34 @@ static int cmd_info(char* args) {
     goto L_CMD_INFO_UNKNOWN;
   switch (*subcmd) {
     case 'r' :
-      printf("eax\t0x%08x\n", cpu.eax);
-      printf("ecx\t0x%08x\n", cpu.ecx);
-      printf("edx\t0x%08x\n", cpu.edx);
-      printf("ebx\t0x%08x\n", cpu.ebx);
-      printf("esp\t0x%08x\n", cpu.esp);
-      printf("ebp\t0x%08x\n", cpu.ebp);
-      printf("esi\t0x%08x\n", cpu.esi);
-      printf("edi\t0x%08x\n", cpu.edi);
-      printf("eip\t0x%08x\n", cpu.eip);
+      printf("eax\t0x%08x\t%d\n", cpu.eax, cpu.eax);
+      printf("ecx\t0x%08x\t%d\n", cpu.ecx, cpu.ecx);
+      printf("edx\t0x%08x\t%d\n", cpu.edx, cpu.edx);
+      printf("ebx\t0x%08x\t%d\n", cpu.ebx, cpu.ebx);
+      printf("esp\t0x%08x\t%d\n", cpu.esp, cpu.esp);
+      printf("ebp\t0x%08x\t%d\n", cpu.ebp, cpu.ebp);
+      printf("esi\t0x%08x\t%d\n", cpu.esi, cpu.esi);
+      printf("edi\t0x%08x\t%d\n", cpu.edi, cpu.edi);
+      printf("eip\t0x%08x\t%d\n", cpu.eip, cpu.eip);
+
+      printf("ax\t0x%04x\t%d\n", reg_w_unsafe(R_AX), reg_w_unsafe(R_AX));
+      printf("cx\t0x%04x\t%d\n", reg_w_unsafe(R_CX), reg_w_unsafe(R_CX));
+      printf("dx\t0x%04x\t%d\n", reg_w_unsafe(R_DX), reg_w_unsafe(R_DX));
+      printf("bx\t0x%04x\t%d\n", reg_w_unsafe(R_BX), reg_w_unsafe(R_BX));
+      printf("sp\t0x%04x\t%d\n", reg_w_unsafe(R_SP), reg_w_unsafe(R_SP));
+      printf("bp\t0x%04x\t%d\n", reg_w_unsafe(R_BP), reg_w_unsafe(R_BP));
+      printf("si\t0x%04x\t%d\n", reg_w_unsafe(R_SI), reg_w_unsafe(R_SI));
+      printf("di\t0x%04x\t%d\n", reg_w_unsafe(R_DI), reg_w_unsafe(R_DI));
+
+      printf("al\t0x%02x\t%d\n", reg_b_unsafe(R_AL), reg_b_unsafe(R_AL));
+      printf("cl\t0x%02x\t%d\n", reg_b_unsafe(R_CL), reg_b_unsafe(R_CL));
+      printf("dl\t0x%02x\t%d\n", reg_b_unsafe(R_DL), reg_b_unsafe(R_DL));
+      printf("bl\t0x%02x\t%d\n", reg_b_unsafe(R_BL), reg_b_unsafe(R_BL));
+      printf("ah\t0x%02x\t%d\n", reg_b_unsafe(R_AH), reg_b_unsafe(R_AH));
+      printf("ch\t0x%02x\t%d\n", reg_b_unsafe(R_CH), reg_b_unsafe(R_CH));
+      printf("dh\t0x%02x\t%d\n", reg_b_unsafe(R_DH), reg_b_unsafe(R_DH));
+      printf("bh\t0x%02x\t%d\n", reg_b_unsafe(R_BH), reg_b_unsafe(R_BH));
+
       break;
     case 'w' : break;
     default : goto L_CMD_INFO_UNKNOWN;
