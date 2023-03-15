@@ -222,8 +222,6 @@ static true_inline bool token_mono(int type) {
         tokens[i]->type = (dst);                     \
   } while (0)
 
-Token* var_v[TKOEN_V_SZ];
-int var_i;
 Token* op_v[TKOEN_V_SZ];
 int op_i;
 Token* post_v[TKOEN_V_SZ];
@@ -252,7 +250,6 @@ int num_i;
   static true_inline bool name##_empty(void) { return stack_empty(name##_i); } \
   static true_inline size_t name##_size(void) { return stack_size(name##_i); }
 
-stack_code(Token*, var);
 stack_code(Token*, op);
 stack_code(Token*, post);
 stack_code(int64_t, num);
@@ -269,29 +266,6 @@ int64_t readvar(Token* tk) {
   return ans;
 }
 
-static int expr_helper() {
-  if (var_size() == 0) return 1;
-  if (post_empty()) {
-    if (var_size() == 1) {
-      post_push(var_pop());
-      while (!op_empty()) post_push(op_pop());
-    } else {
-      Token* tmp = var_pop();
-      post_push(var_pop());
-      post_push(tmp);
-      while (!op_empty() && token_mono(op_top()->type)) post_push(op_pop());
-      if (op_empty()) return 1;
-      post_push(op_pop());
-    }
-  } else {
-    post_push(var_pop());
-    while (!op_empty() && token_mono(op_top()->type)) post_push(op_pop());
-    if (op_empty()) return 1;
-    post_push(op_pop());
-  }
-  return 0;
-}
-
 uint32_t expr(char* e, bool* success) {
   uint32_t ret = 0;
   if (success) *success = false;
@@ -303,27 +277,16 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('+', TK_POS);
 
   for (int i = 0; i < nr_token; ++i) {
-    // if (token_var(tokens[i]->type)) Log("%s", tokens[i]->str);
-    // else if (tokens[i]->type < 256) Log("%c", tokens[i]->type);
-    // else Log("%d", tokens[i]->type);
-
-    if (token_var(tokens[i]->type)) var_push(tokens[i]);
+    if (token_var(tokens[i]->type)) post_push(tokens[i]);
     else {
-      // + 5
-      // * 4
-      // N 2
       while (!op_empty() &&
-        (token_priority[op_top()->type] <= token_priority[tokens[i]->type] ||
-          (token_mono(op_top()->type) && token_mono(tokens[i]->type))))
-        if (expr_helper()) goto L_EXPR_RELEASE;
+        token_priority[op_top()->type] <= token_priority[tokens[i]->type])
+        post_push(op_pop());
       op_push(tokens[i]);
     }
   }
 
-  while (!op_empty())
-    if (expr_helper()) goto L_EXPR_RELEASE;
-
-  if (!var_empty()) goto L_EXPR_RELEASE;
+  while (!op_empty()) post_push(op_pop());
 
   int64_t ans = 0;
   int64_t x = 0, y = 0;
@@ -367,18 +330,18 @@ uint32_t expr(char* e, bool* success) {
     }
   }
 
+  if (num_size() != 1) goto L_EXPR_RELEASE;
+
   ret = (uint32_t) num_pop();
   if (success) *success = true;
 
 L_EXPR_RELEASE:
   nr_token = 0;
-  var_i = 0;
   op_i = 0;
   post_i = 0;
   for (int i = 0; i < nr_token; ++i) {
     free(tokens[i]);
     tokens[i] = NULL;
-    var_v[i] = NULL;
     op_v[i] = NULL;
     post_v[i] = NULL;
   }
