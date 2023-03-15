@@ -361,7 +361,7 @@ L_EXPR_FOR_END:
     else Log("%d", post_v[i]->type);
     if (token_var(post_v[i]->type)) num_push(readvar(post_v[i]));
     else {
-      if (token_priority[post_v[i]->type] <= 0 || token_brace(post_v[i]->type))
+      if (token_priority[post_v[i]->type] <= 1 || token_brace(post_v[i]->type))
         break;
       if (token_mono(post_v[i]->type)) {
         ans = x = num_pop();
