@@ -32,8 +32,8 @@ enum {
   TK_NEG,
 };
 
-static int token_priority[] = {['\0'] = 0,
-  ['('] = 1,
+static int token_priority[] = {
+  ['\0'] = 0,
 
   ['!'] = 2,
   [TK_POS] = 2,
@@ -66,7 +66,9 @@ static int token_priority[] = {['\0'] = 0,
   [TK_LAND] = 12,
   [TK_LOR] = 13,
 
-  [')'] = 20};
+  [')'] = 20,
+  ['('] = 21,
+};
 
 static struct rule {
   char* regex;
@@ -326,23 +328,22 @@ uint32_t expr(char* e, bool* success) {
 
   for (int i = 0; i < nr_token; ++i) {
     if (token_var(tokens[i]->type)) post_push(tokens[i]);
-    else {  // + 5
-            // * 4
-            // ( 1
-            // ) 20
-      while (!op_empty() && !token_left_brace(op_top()->type) &&
+    else {
+      // ( 21
+      // ) 20
+      // + 5
+      // * 4
+      while (!op_empty() &&
         token_priority[op_top()->type] <= token_priority[tokens[i]->type] &&
-        !(token_mono(op_top()->type) && token_mono(tokens[i]->type))) {
-        if (token_brace_match(op_top()->type, tokens[i]->type)) {
-          op_pop();
-          goto L_EXPR_FOR_END;
-        }
+        !(token_mono(op_top()->type) && token_mono(tokens[i]->type)))
         post_push(op_pop());
+
+      if (!op_empty() && token_brace_match(op_top()->type, tokens[i]->type)) {
+        op_pop();
+        continue;
       }
       op_push(tokens[i]);
     }
-L_EXPR_FOR_END:
-    NULL;
   }
   while (!op_empty()) {
     if (token_brace(op_top()->type)) op_pop();
