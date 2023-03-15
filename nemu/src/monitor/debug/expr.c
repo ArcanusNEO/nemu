@@ -35,6 +35,7 @@ static int token_priority[] = {['\0'] = 0,
 
   ['*'] = 4,
   ['/'] = 4,
+  ['%'] = 4,
 
   ['+'] = 5,
   ['-'] = 5,
@@ -64,6 +65,7 @@ static struct rule {
   {             "-",       '-'}, // minus & negative
   {           "\\*",       '*'}, // multiplication & dereference
   {             "/",       '/'}, // division
+  {             "%",       '%'}, // modulo
   {             "!",       '!'}, // logical not
   {           "\\(",       '('}, // left brace
   {           "\\)",       ')'}, // right brace
@@ -161,6 +163,10 @@ static bool make_token(char* e) {
           case '/' :
             tk = tokens[nr_token++] = malloc(sizeof(Token));
             tk->type = '/';
+            break;
+          case '%' :
+            tk = tokens[nr_token++] = malloc(sizeof(Token));
+            tk->type = '%';
             break;
           case '!' :
             tk = tokens[nr_token++] = malloc(sizeof(Token));
@@ -276,7 +282,6 @@ uint32_t expr(char* e, bool* success) {
   map_tokens_mono_op('-', TK_NEG);
   map_tokens_mono_op('+', TK_POS);
 
-  
   for (int i = 0; i < nr_token; ++i) {
     if (token_var(tokens[i]->type)) post_push(tokens[i]);
     else {
@@ -323,7 +328,14 @@ uint32_t expr(char* e, bool* success) {
           case '+' : ans = x + y; break;
           case '-' : ans = x - y; break;
           case '*' : ans = x * y; break;
-          case '/' : ans = x / y; break;
+          case '/' :
+            if (y == 0) goto L_EXPR_RELEASE;
+            ans = x / y;
+            break;
+          case '%' :
+            if (y == 0) goto L_EXPR_RELEASE;
+            ans = x % y;
+            break;
           default : break;
         }
         num_push(ans);
