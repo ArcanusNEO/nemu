@@ -46,7 +46,7 @@ bool travel_wp(void) {
     uint32_t val = expr(wp->expr_str, NULL);
 
     if (val != wp->val) {
-      printf("Watchpoint #%u: %s\n", wp->no, wp->expr_str);
+      printf("\nWatchpoint #%u: %s\n", wp->no, wp->expr_str);
       printf("Old value: 0x%08x\t%d\n", wp->val, wp->val);
       printf("New value: 0x%08x\t%d\n", val, val);
 
@@ -54,6 +54,8 @@ bool travel_wp(void) {
       printf("At 0x%08x: 0x%08x\n", addr, vaddr_read(addr, 4));
 
       wp->val = val;
+
+      ret = true;
     }
 
   } while (i != wp_pool->_);
