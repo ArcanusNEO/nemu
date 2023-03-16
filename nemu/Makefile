@@ -12,7 +12,7 @@ include Makefile.git
 CC = gcc
 LD = gcc
 INCLUDES  = $(addprefix -I, $(INC_DIR))
-CFLAGS   += -std=gnu11 -O2 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
+CFLAGS   += -O2 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
 
 # Files to be compiled
 SRCS = $(shell find src/ -name "*.c")
