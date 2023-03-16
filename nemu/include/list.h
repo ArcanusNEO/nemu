@@ -120,7 +120,7 @@ static void* list_pop_front(struct list* this) {
 
 header_code(list);
 
-void list_init(void* instance) {
+static void list_init(void* instance) {
   list_t* this = instance;
   this->_ = NULL;
   this->_size = 0;
@@ -136,7 +136,7 @@ void list_init(void* instance) {
   bind_fn(list, this, pop_back);
 }
 
-void list_uninit(void* instance) {
+static void list_uninit(void* instance) {
   list_t* this = instance;
 
   while (!call(this, empty)) call(this, pop_back);
