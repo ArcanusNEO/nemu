@@ -54,13 +54,15 @@ bool travel_wp(void) {
 
       vaddr_t addr = cpu.eip;
       printf("At 0x%08x: 0x%08x\n", addr, vaddr_read(addr, 4));
-      
+
       puts("");
 
       wp->val = val;
 
       ret = true;
     }
+
+    i = i->next;
 
   } while (i != wp_pool->_);
 
