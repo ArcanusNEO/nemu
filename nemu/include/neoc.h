@@ -44,7 +44,7 @@
 
 #define static_call(st, func, args...) ((st##_##func)(args))
 
-#define bind_func(st, ptr, mbrfunc) (ptr->mbrfunc = st##_##mbrfunc)
+#define bind_fn(st, ptr, mbrfunc) (ptr->mbrfunc = st##_##mbrfunc)
 
 #define create(st)                         \
   ({                                       \
@@ -59,21 +59,21 @@
     free(ptr);            \
   })
 
-#define gen_destroy_func(st)              \
+#define destroy_code(st)                  \
   void(st##_##destroy)(void* pinstance) { \
     (st##_##uninit)(*(void**) pinstance); \
     free(*(void**) pinstance);            \
   }
 
-true_inline void _generic_release(void* ptr) {
+true_inline void _generic_release_(void* ptr) {
   free(*(void**) ptr);
 }
 
-#define smart __attribute__((cleanup(_generic_release)))
+#define smart __attribute__((cleanup(_generic_release_)))
 
 #define smart_class(st) __attribute__((cleanup(st##_##destroy)))
 
-#define smart_create(st, name)                                 \
+#define smart_def(st, name)                                    \
   smart_class(st) struct st* name = malloc(sizeof(struct st)); \
   (st##_##init)(name);
 
