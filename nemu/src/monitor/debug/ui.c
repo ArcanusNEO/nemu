@@ -9,6 +9,8 @@
 
 #include "list.h"
 #include "monitor/monitor.h"
+#include "monitor/watchpoint.h"
+#include "neoc.h"
 
 void cpu_exec(uint64_t);
 
@@ -53,6 +55,8 @@ static int cmd_x(char* args);
 
 static int cmd_w(char* args);
 
+static int cmd_d(char* args);
+
 static int cmd_cls(char* args) {
   printf("\033c");
   return 0;
@@ -78,9 +82,24 @@ static struct {
    cmd_x                                                                                                                                                    },
   {   "w",
    "Pause program execution when the value of the expression \"EXPR\" changes",    cmd_w                                                                    },
+  {   "d",
+   "Pause program execution when the value of the expression \"EXPR\" changes",    cmd_d                                                                    },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
+
+static int cmd_d(char* args) {
+  char* arg = strtok(NULL, " ");
+  if (arg == NULL) goto L_CMD_D_USAGE;
+  int n = atoi(arg);
+
+  delete_wp(n);
+
+  return 0;
+L_CMD_D_USAGE:
+  puts("Usage: d N");
+  return 1;
+}
 
 static int cmd_w(char* args) {
   char* e = strtok(NULL, " ");
@@ -133,8 +152,9 @@ L_CMD_X_USAGE:
 
 static int cmd_si(char* args) {
   char* arg = strtok(NULL, " ");
-  int n = 1;
+  int n;
   if (arg != NULL) n = atoi(arg);
+  n = n > 0 ? n : 1;
   cpu_exec(n);
   return 0;
 }

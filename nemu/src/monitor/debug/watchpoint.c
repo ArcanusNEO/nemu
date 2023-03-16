@@ -88,12 +88,13 @@ void delete_wp(unsigned no) {
 
   do {
     watchpoint_t* wp = i->payload;
-    
-    if (wp->no == no)
-      ;
+
+    if (wp->no == no) {
+      call(wp_pool, pop, i);
+      break;
+    }
 
     i = i->next;
 
   } while (i != wp_pool->_);
-
 }
