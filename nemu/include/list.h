@@ -22,6 +22,8 @@ typedef struct list {
   void* (*push_back)(struct list* this, void* payload);
   void* (*pop_front)(struct list* this);
   void* (*pop_back)(struct list* this);
+  void* (*pop)(struct list* this, list_node_t* selection);
+  void* (*push)(struct list* this, void* payload, list_node_t* prev);
 
 } list_t;
 
@@ -43,6 +45,33 @@ typedef struct list {
 #define pop_front pop_front
 // void* (*pop_back)(struct list* this);
 #define pop_back pop_back
+// void* (*pop)(struct list* this, list_node_t* selection);
+#define pop pop
+// void* (*push)(struct list* this, void* payload, list_node_t* prev)
+#define push push
+
+static void* list_pop(struct list* this, list_node_t* selection) {
+  if (this->_ == NULL) return NULL;
+  if (selection == NULL) selection = this->_->prev;
+
+  list_node_t* p = selection->prev;
+  list_node_t* n = selection->next;
+  void* payload = selection->payload;
+
+  p->next = n;
+  n->prev = p;
+
+  if (this->_ == selection) this->_ = n;
+
+  --this->_size;
+
+  if (this->_release_payload) free(payload);
+  free(selection);
+
+  if (this->_size == 0) this->_ = NULL;
+
+  return payload;
+}
 
 static void list_set_release_payload(struct list* this, int flag) {
   this->_release_payload = flag;
@@ -60,7 +89,7 @@ static size_t list_size(struct list* this) {
   return this->_size;
 }
 
-static void* insert_first(struct list* this, void* payload) {
+static void* _insert_first_(struct list* this, void* payload) {
   this->_ = malloc(sizeof(list_node_t));
   this->_->payload = payload;
   this->_->prev = this->_->next = this->_;
@@ -68,21 +97,30 @@ static void* insert_first(struct list* this, void* payload) {
   return payload;
 }
 
-static void instert(list_node_t* node, list_node_t* prev, list_node_t* next) {
+static void _insert_(list_node_t* node, list_node_t* prev, list_node_t* next) {
   node->next = next;
   node->prev = prev;
   prev->next = node;
   next->prev = node;
 }
 
-static void* list_push_back(struct list* this, void* payload) {
-  if (this->_ == NULL) return insert_first(this, payload);
+static void* list_push(struct list* this, void* payload, list_node_t* prev) {
+  if (this->_ == NULL) return _insert_first_(this, payload);
+  if (prev == NULL) prev = this->_->prev;
+
+  list_node_t* next = prev->next;
 
   list_node_t* p = malloc(sizeof(list_node_t));
   p->payload = payload;
-  instert(p, this->_->prev, this->_);
+
+  _insert_(p, prev, next);
   ++this->_size;
+
   return payload;
+}
+
+static void* list_push_back(struct list* this, void* payload) {
+  return call(this, push, payload, NULL);
 }
 
 static void* list_push_front(struct list* this, void* payload) {
@@ -92,30 +130,11 @@ static void* list_push_front(struct list* this, void* payload) {
 }
 
 static void* list_pop_back(struct list* this) {
-  if (this->_ == NULL) return NULL;
-
-  list_node_t* mid = this->_->prev;
-  list_node_t* p = this->_->prev->prev;
-  void* payload = mid->payload;
-
-  p->next = this->_;
-  this->_->prev = p;
-
-  --this->_size;
-
-  if (this->_release_payload) free(payload);
-  free(mid);
-
-  if (this->_size == 0) this->_ = NULL;
-
-  return payload;
+  return call(this, pop, NULL);
 }
 
 static void* list_pop_front(struct list* this) {
-  if (this->_ == NULL) return NULL;
-
-  this->_ = this->_->next;
-  return list_pop_back(this);
+  return call(this, pop, this->_);
 }
 
 header_code(list);
@@ -134,6 +153,8 @@ static void list_init(void* instance) {
   bind_fn(list, this, push_back);
   bind_fn(list, this, pop_front);
   bind_fn(list, this, pop_back);
+  bind_fn(list, this, pop);
+  bind_fn(list, this, push);
 }
 
 static void list_uninit(void* instance) {

@@ -6,7 +6,7 @@
 #include "list.h"
 
 typedef struct watchpoint {
-  int no;
+  unsigned no;
 
   /* TODO: Add more members if necessary */
 

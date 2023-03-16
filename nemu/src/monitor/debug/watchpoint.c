@@ -80,3 +80,20 @@ bool travel_wp(bool summary) {
 
   return ret;
 }
+
+void delete_wp(unsigned no) {
+  if (wp_pool == NULL || wp_pool->_ == NULL) return;
+
+  list_node_t* i = wp_pool->_;
+
+  do {
+    watchpoint_t* wp = i->payload;
+    
+    if (wp->no == no)
+      ;
+
+    i = i->next;
+
+  } while (i != wp_pool->_);
+
+}
