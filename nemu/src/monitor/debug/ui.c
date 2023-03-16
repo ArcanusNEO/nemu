@@ -82,8 +82,7 @@ static struct {
    cmd_x                                                                                                                                                    },
   {   "w",
    "Pause program execution when the value of the expression \"EXPR\" changes",    cmd_w                                                                    },
-  {   "d",
-   "Pause program execution when the value of the expression \"EXPR\" changes",    cmd_d                                                                    },
+  {   "d",                                                                                                              "Delete the watchpoint #N",    cmd_d},
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
@@ -152,9 +151,9 @@ L_CMD_X_USAGE:
 
 static int cmd_si(char* args) {
   char* arg = strtok(NULL, " ");
-  int n;
+  int n = 1;
   if (arg != NULL) n = atoi(arg);
-  n = n > 0 ? n : 1;
+  // n = n > 0 ? n : 1;
   cpu_exec(n);
   return 0;
 }
