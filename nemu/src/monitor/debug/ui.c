@@ -7,6 +7,9 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
+#include "list.h"
+#include "monitor/monitor.h"
+
 void cpu_exec(uint64_t);
 
 /* We use the `readline' library to provide more flexibility to read from stdin.
@@ -183,7 +186,9 @@ static int cmd_info(char* args) {
         reg_b_unsafe(R_BL));
 
       break;
-    case 'w' : break;
+    case 'w' : 
+    
+    break;
     default : goto L_CMD_INFO_UNKNOWN;
   }
   return 0;

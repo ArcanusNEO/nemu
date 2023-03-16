@@ -17,6 +17,6 @@ typedef struct watchpoint {
 
 void init_wp_pool(list_t* smart_wp_pool);
 watchpoint_t* new_wp(char expr_str[]);
-bool travel_wp(void);
+bool travel_wp(bool);
 
 #endif

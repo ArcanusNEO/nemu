@@ -37,29 +37,35 @@ watchpoint_t* new_wp(char expr_str[]) {
   return wp;
 }
 
-bool travel_wp(void) {
+bool travel_wp(bool summary) {
   list_node_t* i = wp_pool->_;
   bool ret = false;
 
   do {
     watchpoint_t* wp = i->payload;
     uint32_t old_val = wp->val;
-    uint32_t val = expr(wp->expr_str, NULL);
-    wp->val = val;
 
-    if (val != old_val) {
-      puts("");
-
+    if (summary) {
       printf("Watchpoint #%u: %s\n", wp->no, wp->expr_str);
-      printf("Old value: 0x%08x\t%d\n", old_val, old_val);
-      printf("New value: 0x%08x\t%d\n", val, val);
+      printf("Value: 0x%08x\t%d\n\n", wp->val, wp->val);
+    } else {
+      uint32_t val = expr(wp->expr_str, NULL);
+      wp->val = val;
 
-      vaddr_t addr = cpu.eip;
-      printf("At 0x%08x: 0x%08x\n", addr, vaddr_read(addr, 4));
+      if (val != old_val) {
+        puts("");
 
-      puts("");
+        printf("Watchpoint #%u: %s\n", wp->no, wp->expr_str);
+        printf("Old value: 0x%08x\t%d\n", old_val, old_val);
+        printf("New value: 0x%08x\t%d\n", val, val);
 
-      ret = true;
+        vaddr_t addr = cpu.eip;
+        printf("At 0x%08x: 0x%08x\n", addr, vaddr_read(addr, 4));
+
+        puts("");
+
+        ret = true;
+      }
     }
 
     i = i->next;
