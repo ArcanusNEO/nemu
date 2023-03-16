@@ -135,10 +135,10 @@ typedef struct token {
 
 #define TKOEN_V_SZ 512
 
-Token op_pool[TKOEN_V_SZ];
-Token* op_pool_i = op_pool;
-Token* tokens[TKOEN_V_SZ];
-int nr_token;
+static Token op_pool[TKOEN_V_SZ];
+static Token* op_pool_i = op_pool;
+static Token* tokens[TKOEN_V_SZ];
+static int nr_token;
 
 #define case_op(ch)                        \
   case (ch) :                              \
@@ -255,12 +255,12 @@ static true_inline bool token_brace_match(int ty, int tz) {
         tokens[i]->type = (dst);                       \
   } while (0)
 
-Token* op_v[TKOEN_V_SZ];
-int op_i;
-Token* post_v[TKOEN_V_SZ];
-int post_i;
-int64_t num_v[TKOEN_V_SZ];
-int num_i;
+static Token* op_v[TKOEN_V_SZ];
+static int op_i;
+static Token* post_v[TKOEN_V_SZ];
+static int post_i;
+static int64_t num_v[TKOEN_V_SZ];
+static int num_i;
 
 #define stack_push(container, index, object) ((container)[(index)++] = (object))
 #define stack_pop(container, index)          (container)[--(index)]
