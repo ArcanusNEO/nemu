@@ -54,19 +54,24 @@
   })
 
 #define destroy(st, ptr)  \
-  ({                      \
+  do {                    \
     (st##_##uninit)(ptr); \
     free(ptr);            \
-  })
+  } while (0)
 
-#define destroy_code(st)                  \
-  void(st##_##destroy)(void* pinstance) { \
-    (st##_##uninit)(*(void**) pinstance); \
-    free(*(void**) pinstance);            \
+#define destroy_code(st)                     \
+  (void) (st##_##destroy)(void* pinstance) { \
+    (st##_##uninit)(*(void**) pinstance);    \
+    free(*(void**) pinstance);               \
   }
 
-true_inline void _generic_release_(void* ptr) {
-  free(*(void**) ptr);
+#define header_code(st)                    \
+  (void) (st##_##destroy)(void* instance); \
+  (void) (st##_##init)(void* instance);    \
+  (void) (st##_##uninit)(void* instance);
+
+static true_inline void _generic_release_(void* pinstance) {
+  free(*(void**) pinstance);
 }
 
 #define smart __attribute__((cleanup(_generic_release_)))
@@ -75,7 +80,7 @@ true_inline void _generic_release_(void* ptr) {
 
 #define smart_def(st, name)                                    \
   smart_class(st) struct st* name = malloc(sizeof(struct st)); \
-  (st##_##init)(name);
+  (st##_##init)(name)
 
 #define attr_packed __attribute__((packed))
 
