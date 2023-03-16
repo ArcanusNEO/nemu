@@ -39,7 +39,7 @@ watchpoint_t* new_wp(char expr_str[]) {
 
 bool travel_wp(bool summary) {
   if (wp_pool == NULL || wp_pool->_ == NULL) return false;
-  
+
   list_node_t* i = wp_pool->_;
   bool ret = false;
 
@@ -48,8 +48,9 @@ bool travel_wp(bool summary) {
     uint32_t old_val = wp->val;
 
     if (summary) {
+      puts("");
       printf("Watchpoint #%u: %s\n", wp->no, wp->expr_str);
-      printf("Value: 0x%08x\t%d\n\n", wp->val, wp->val);
+      printf("Value: 0x%08x\t%d\n", wp->val, wp->val);
     } else {
       uint32_t val = expr(wp->expr_str, NULL);
       wp->val = val;
