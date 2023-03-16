@@ -1,3 +1,6 @@
+#ifndef _LIST_H_
+#define _LIST_H_
+
 #include "neoc.h"
 
 typedef struct list_node {
@@ -140,3 +143,5 @@ void list_uninit(void* instance) {
 }
 
 destroy_code(list);
+
+#endif  // _LIST_H_

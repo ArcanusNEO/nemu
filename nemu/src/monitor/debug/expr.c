@@ -131,13 +131,13 @@ void init_regex() {
 typedef struct token {
   int type;
   char str[0];
-} Token;
+} token_t;
 
 #define TKOEN_V_SZ 512
 
-static Token op_pool[TKOEN_V_SZ];
-static Token* op_pool_i = op_pool;
-static Token* tokens[TKOEN_V_SZ];
+static token_t op_pool[TKOEN_V_SZ];
+static token_t* op_pool_i = op_pool;
+static token_t* tokens[TKOEN_V_SZ];
 static int nr_token;
 
 #define case_op(ch)                        \
@@ -146,12 +146,12 @@ static int nr_token;
     tk->type = (ch);                       \
     break;
 
-#define case_var(var)                                                 \
-  case (var) :                                                        \
-    tk = tokens[nr_token++] = malloc(sizeof(Token) + substr_len + 1); \
-    tk->type = (var);                                                 \
-    strncpy(tk->str, substr_start, substr_len);                       \
-    tk->str[substr_len] = '\0';                                       \
+#define case_var(var)                                                   \
+  case (var) :                                                          \
+    tk = tokens[nr_token++] = malloc(sizeof(token_t) + substr_len + 1); \
+    tk->type = (var);                                                   \
+    strncpy(tk->str, substr_start, substr_len);                         \
+    tk->str[substr_len] = '\0';                                         \
     break;
 
 static bool make_token(char* e) {
@@ -178,7 +178,7 @@ static bool make_token(char* e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        Token* tk = NULL;
+        token_t* tk = NULL;
         switch (rules[i].token_type) {
           case_op(TK_EQ);
           case_op(TK_UNEQ);
@@ -255,9 +255,9 @@ static true_inline bool token_brace_match(int ty, int tz) {
         tokens[i]->type = (dst);                       \
   } while (0)
 
-static Token* op_v[TKOEN_V_SZ];
+static token_t* op_v[TKOEN_V_SZ];
 static int op_i;
-static Token* post_v[TKOEN_V_SZ];
+static token_t* post_v[TKOEN_V_SZ];
 static int post_i;
 static int64_t num_v[TKOEN_V_SZ];
 static int num_i;
@@ -283,11 +283,11 @@ static int num_i;
   static true_inline bool name##_empty(void) { return stack_empty(name##_i); } \
   static true_inline size_t name##_size(void) { return stack_size(name##_i); }
 
-stack_code(Token*, op);
-stack_code(Token*, post);
+stack_code(token_t*, op);
+stack_code(token_t*, post);
 stack_code(int64_t, num);
 
-static int64_t readvar(Token* tk) {
+static int64_t readvar(token_t* tk) {
   if (tk == NULL) return 0;
   int64_t ans = 0xfee1dead;
   char* s;

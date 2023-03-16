@@ -40,7 +40,7 @@
 
 #define lambda(retty, fn) ({ retty _lambda_fn_ fn _lambda_fn_; })
 
-#define call(instance, mbrfn, args...) (instance->mbrfn(instance, ##args))
+#define call(instance, mbrfn, args...) ((instance)->mbrfn(instance, ##args))
 
 #define static_call(struct_name, fn, args...) ((struct_name##_##fn)(args))
 
