@@ -120,7 +120,8 @@ static void* list_push(struct list* this, void* payload, list_node_t* prev) {
 }
 
 static void* list_push_back(struct list* this, void* payload) {
-  return call(this, push, payload, NULL);
+  // return call(this, push, payload, NULL);
+  return list_push(this, payload, NULL);
 }
 
 static void* list_push_front(struct list* this, void* payload) {
