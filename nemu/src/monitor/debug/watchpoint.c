@@ -49,8 +49,11 @@ bool travel_wp(bool summary) {
 
     if (summary) {
       puts("");
+
       printf("Watchpoint #%u: %s\n", wp->no, wp->expr_str);
       printf("Value: 0x%08x\t%d\n", wp->val, wp->val);
+
+      puts("");
     } else {
       uint32_t val = expr(wp->expr_str, NULL);
       wp->val = val;
