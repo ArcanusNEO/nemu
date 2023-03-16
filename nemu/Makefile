@@ -9,10 +9,10 @@ include Makefile.git
 .DEFAULT_GOAL = app
 
 # Compilation flags
-CC = clang
-LD = clang
+CC = gcc
+LD = gcc
 INCLUDES  = $(addprefix -I, $(INC_DIR))
-CFLAGS   += -std=gnu17 -O3 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
+CFLAGS   += -std=gnu11 -O3 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
 
 # Files to be compiled
 SRCS = $(shell find src/ -name "*.c")
