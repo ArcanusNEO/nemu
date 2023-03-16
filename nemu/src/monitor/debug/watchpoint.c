@@ -28,7 +28,7 @@ watchpoint_t* new_wp(char expr_str[]) {
 
   if (res) {
     wp->no = ++wp_counter;
-    call(wp_pool, push_back, wp);
+    // call(wp_pool, push_back, wp);
   } else {
     free(wp);
     wp = NULL;
