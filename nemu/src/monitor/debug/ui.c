@@ -186,9 +186,7 @@ static int cmd_info(char* args) {
         reg_b_unsafe(R_BL));
 
       break;
-    case 'w' : 
-    
-    break;
+    case 'w' : travel_wp(true); break;
     default : goto L_CMD_INFO_UNKNOWN;
   }
   return 0;
