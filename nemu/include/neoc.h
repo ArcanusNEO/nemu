@@ -36,7 +36,7 @@
 #endif
 
 #define tostruct(struct_type, mbr, mbrptr) \
-  ((struct_type*) ((size_t) mbrptr - offsetof(struct_type，mbr)))
+  ((struct_type*) ((size_t) mbrptr - offsetof(struct_type, mbr)))
 
 #define lambda(retty, fn) ({ retty _lambda_fn_ fn _lambda_fn_; })
 
