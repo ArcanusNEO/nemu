@@ -105,7 +105,7 @@ static struct rule {
   {     "\\$[a-zA-Z]+",    TK_REG}, // register
   {"0[xX][0-9a-fA-F]+",    TK_HEX}, // hexadecimal
   {      "[1-9][0-9]*",    TK_DEC}, // decimal
-  {          "0[0-9]*",    TK_OCT}, // octal
+  {          "0[0-7]*",    TK_OCT}, // octal
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
