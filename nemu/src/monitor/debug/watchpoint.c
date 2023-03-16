@@ -1,6 +1,9 @@
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
 
+#include "cpu/reg.h"
+#include "memory/memory.h"
+
 #include "list.h"
 
 static unsigned wp_counter;
@@ -20,8 +23,40 @@ watchpoint_t* new_wp(char expr_str[]) {
   watchpoint_t* wp = malloc(sizeof(watchpoint_t) + len + 1);
 
   strcpy(wp->expr_str, expr_str);
-  wp->no = ++wp_counter;
+  bool res;
+  wp->val = expr(expr_str, &res);
 
-  call(wp_pool, push_back, wp);
+  if (res) {
+    wp->no = ++wp_counter;
+    call(wp_pool, push_back, wp);
+  } else {
+    free(wp);
+    wp = NULL;
+  }
+
   return wp;
+}
+
+bool travel_wp(void) {
+  list_node_t* i = wp_pool->_;
+  bool ret = false;
+
+  do {
+    watchpoint_t* wp = i->payload;
+    uint32_t val = expr(wp->expr_str, NULL);
+
+    if (val != wp->val) {
+      printf("Watchpoint #%u: %s\n", wp->no, wp->expr_str);
+      printf("Old value: 0x%08x\t%d\n", wp->val, wp->val);
+      printf("New value: 0x%08x\t%d\n", val, val);
+
+      vaddr_t addr = cpu.eip;
+      printf("At 0x%08x: 0x%08x\n", addr, vaddr_read(addr, 4));
+
+      wp->val = val;
+    }
+
+  } while (i != wp_pool->_);
+
+  return ret;
 }

@@ -48,6 +48,8 @@ static int cmd_p(char* args);
 
 static int cmd_x(char* args);
 
+static int cmd_w(char* args);
+
 static int cmd_cls(char* args) {
   printf("\033c");
   return 0;
@@ -71,9 +73,21 @@ static struct {
   {   "x",
    "Calculate the value of the expression \"EXPR\" and output N continuous 4-byte memory addresses in hexadecimal format starting from the result",
    cmd_x                                                                                                                                                    },
+  {   "w",
+   "Pause program execution when the value of the expression \"EXPR\" changes",    cmd_w                                                                    },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
+
+static int cmd_w(char* args) {
+  char* e = strtok(NULL, " ");
+  if (e == NULL || new_wp(e) == NULL) goto L_CMD_W_USAGE;
+
+  return 0;
+L_CMD_W_USAGE:
+  puts("Usage: w EXPR");
+  return 1;
+}
 
 static int cmd_p(char* args) {
   if (args == NULL) goto L_CMD_P_ERROR;
