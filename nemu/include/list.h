@@ -120,7 +120,6 @@ static void* list_push(struct list* this, void* payload, list_node_t* prev) {
 }
 
 static void* list_push_back(struct list* this, void* payload) {
-  // return call(this, push, payload, NULL);
   return list_push(this, payload, NULL);
 }
 
@@ -131,11 +130,11 @@ static void* list_push_front(struct list* this, void* payload) {
 }
 
 static void* list_pop_back(struct list* this) {
-  return call(this, pop, NULL);
+  return list_pop(this, NULL);
 }
 
 static void* list_pop_front(struct list* this) {
-  return call(this, pop, this->_);
+  return list_pop(this, this->_);
 }
 
 header_code(list);
@@ -161,7 +160,8 @@ static void list_init(void* instance) {
 static void list_uninit(void* instance) {
   list_t* this = instance;
 
-  while (!call(this, empty)) call(this, pop_back);
+  // while (!list_empty(this)) list_pop_back(this);
+  while (!list_empty(this)) printf("%p ", list_pop_back(this));
 }
 
 destroy_code(list);
