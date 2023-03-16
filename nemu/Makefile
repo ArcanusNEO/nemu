@@ -12,7 +12,7 @@ include Makefile.git
 CC = gcc
 LD = gcc
 INCLUDES  = $(addprefix -I, $(INC_DIR))
-CFLAGS   += -O2 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
+CFLAGS   += -std=gnu11 -O3 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
 
 # Files to be compiled
 SRCS = $(shell find src/ -name "*.c")
@@ -40,7 +40,7 @@ NEMU_EXEC := $(BINARY) $(ARGS)
 $(BINARY): $(OBJS)
 	$(call git_commit, "compile")
 	@echo + LD $@
-	@$(LD) -O2 -o $@ $^ -lSDL2 -lreadline
+	@$(LD) -O3 -o $@ $^ -lSDL2 -lreadline
 
 run: $(BINARY)
 	$(call git_commit, "run")

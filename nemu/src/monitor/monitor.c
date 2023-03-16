@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include "list.h"
 #include "monitor/watchpoint.h"
 #include "nemu.h"
 
@@ -104,7 +103,7 @@ static inline void parse_args(int argc, char* argv[]) {
   }
 }
 
-int init_monitor(int argc, char* argv[]) {
+int init_monitor(int argc, char* argv[], int initc, void* initv[]) {
   /* Perform some global initialization. */
 
   /* Parse arguments. */
@@ -131,8 +130,7 @@ int init_monitor(int argc, char* argv[]) {
   init_regex();
 
   /* Initialize the watchpoint pool. */
-  smart_def(list, smart_wp_pool);
-  init_wp_pool(smart_wp_pool);
+  init_wp_pool(initv[0]);
 
   /* Initialize devices. */
   init_device();
