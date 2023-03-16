@@ -21,6 +21,7 @@ watchpoint_t* new_wp(char expr_str[]) {
 
   strcpy(wp->expr_str, expr_str);
   wp->no = ++wp_counter;
-  
+
   call(wp_pool, push_back, wp);
+  return wp;
 }
