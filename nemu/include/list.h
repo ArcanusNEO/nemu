@@ -136,7 +136,7 @@ void list_init(void* instance) {
 void list_uninit(void* instance) {
   list_t* this = instance;
 
-  while (call(this, pop_back) != NULL) { }
+  while (!call(this, empty)) call(this, pop_back);
 }
 
 destroy_code(list);
