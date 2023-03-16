@@ -68,7 +68,7 @@ static void* insert_first(struct list* this, void* payload) {
   return payload;
 }
 
-static int instert(list_node_t* node, list_node_t* prev, list_node_t* next) {
+static void instert(list_node_t* node, list_node_t* prev, list_node_t* next) {
   node->next = next;
   node->prev = prev;
   prev->next = node;
