@@ -29,46 +29,47 @@
 #define quote_helper(content) #content
 #define quote(content)        quote_helper(content)
 
-#define lengthof(arr) (sizeof(arr) / sizeof((arr)[0]))
+#define lengthof(array) (sizeof(array) / sizeof((array)[0]))
 
 #ifndef offsetof
-  #define offsetof(stty, mbr) ((size_t) (&((stty*) 0)->mbr))
+  #define offsetof(struct_type, mbr) ((size_t) (&((struct_type*) 0)->mbr))
 #endif
 
-#define tostruct(stty, mbr, mbrptr) \
-  ((stty*) ((size_t) mbrptr - offsetof(stty，mbr)))
+#define tostruct(struct_type, mbr, mbrptr) \
+  ((struct_type*) ((size_t) mbrptr - offsetof(struct_type，mbr)))
 
-#define lambda(retty, func) ({ retty _lambda_func_ func _lambda_func_; })
+#define lambda(retty, fn) ({ retty _lambda_fn_ fn _lambda_fn_; })
 
-#define call(ptr, mbrfunc, args...) (ptr->mbrfunc(ptr, ##args))
+#define call(instance, mbrfn, args...) (instance->mbrfn(instance, ##args))
 
-#define static_call(st, func, args...) ((st##_##func)(args))
+#define static_call(struct_name, fn, args...) ((struct_name##_##fn)(args))
 
-#define bind_fn(st, ptr, mbrfunc) (ptr->mbrfunc = st##_##mbrfunc)
+#define bind_fn(struct_name, instance, mbrfn) \
+  (instance->mbrfn = struct_name##_##mbrfn)
 
-#define create(st)                         \
-  ({                                       \
-    void* ptr = malloc(sizeof(struct st)); \
-    (st##_##init)(ptr);                    \
-    ptr;                                   \
+#define create(struct_name)                              \
+  ({                                                     \
+    void* instance = malloc(sizeof(struct struct_name)); \
+    (struct_name##_##init)(instance);                    \
+    instance;                                            \
   })
 
-#define destroy(st, ptr)  \
-  do {                    \
-    (st##_##uninit)(ptr); \
-    free(ptr);            \
+#define destroy(struct_name, instance)  \
+  do {                                  \
+    (struct_name##_##uninit)(instance); \
+    free(instance);                     \
   } while (0)
 
-#define destroy_code(st)                     \
-  (void) (st##_##destroy)(void* pinstance) { \
-    (st##_##uninit)(*(void**) pinstance);    \
-    free(*(void**) pinstance);               \
+#define destroy_code(struct_name)                  \
+  void(struct_name##_##destroy)(void* pinstance) { \
+    (struct_name##_##uninit)(*(void**) pinstance); \
+    free(*(void**) pinstance);                     \
   }
 
-#define header_code(st)                    \
-  (void) (st##_##destroy)(void* instance); \
-  (void) (st##_##init)(void* instance);    \
-  (void) (st##_##uninit)(void* instance);
+#define header_code(struct_name)                  \
+  void(struct_name##_##destroy)(void* pinstance); \
+  void(struct_name##_##init)(void* instance);     \
+  void(struct_name##_##uninit)(void* instance);
 
 static true_inline void _generic_release_(void* pinstance) {
   free(*(void**) pinstance);
@@ -76,12 +77,18 @@ static true_inline void _generic_release_(void* pinstance) {
 
 #define smart __attribute__((cleanup(_generic_release_)))
 
-#define smart_class(st) __attribute__((cleanup(st##_##destroy)))
+#define smart_class(struct_name) \
+  __attribute__((cleanup(struct_name##_##destroy)))
 
-#define smart_def(st, name)                                    \
-  smart_class(st) struct st* name = malloc(sizeof(struct st)); \
-  (st##_##init)(name)
+#define smart_def(struct_name, id)                  \
+  smart_class(struct_name) struct struct_name* id = \
+    malloc(sizeof(struct struct_name));             \
+  (struct_name##_##init)(id)
 
 #define attr_packed __attribute__((packed))
+#define inheritable attr_packed
+
+typedef struct {
+} null_t;
 
 #endif  // _NEOC_H_
