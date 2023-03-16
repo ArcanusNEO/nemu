@@ -38,6 +38,8 @@ watchpoint_t* new_wp(char expr_str[]) {
 }
 
 bool travel_wp(bool summary) {
+  if (wp_pool == NULL || wp_pool->_ == NULL) return false;
+  
   list_node_t* i = wp_pool->_;
   bool ret = false;
 
