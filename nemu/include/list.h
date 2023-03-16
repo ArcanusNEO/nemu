@@ -160,8 +160,7 @@ static void list_init(void* instance) {
 static void list_uninit(void* instance) {
   list_t* this = instance;
 
-  // while (!list_empty(this)) list_pop_back(this);
-  while (!list_empty(this)) printf("%p ", list_pop_back(this));
+  while (!list_empty(this)) list_pop_back(this);
 }
 
 destroy_code(list);
