@@ -18,6 +18,7 @@
  */
 
 #include "common.h"
+
 #include <ctype.h>
 #include <err.h>
 #include <stdbool.h>
@@ -34,7 +35,6 @@
 
 #include <sys/socket.h>
 #include <sys/types.h>
-
 
 #include "protocol.h"
 
