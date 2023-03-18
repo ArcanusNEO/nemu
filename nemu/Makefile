@@ -9,8 +9,8 @@ include Makefile.git
 .DEFAULT_GOAL = app
 
 # Compilation flags
-CC = clang
-LD = clang
+CC = gcc-4.9
+LD = gcc-4.9
 INCLUDES  = $(addprefix -I, $(INC_DIR))
 CFLAGS   += -std=gnu11 -O3 -MMD -Wall -Wno-unused-function -Wno-unused-value -ggdb $(INCLUDES)
 
