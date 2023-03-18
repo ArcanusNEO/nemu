@@ -60,18 +60,29 @@
     free(instance);                     \
   } while (0)
 
-#define destroy_code(struct_name)                         \
+#define destroy_code(struct_name)                  \
+  void(struct_name##_##destroy)(void* pinstance) { \
+    (struct_name##_##uninit)(*(void**) pinstance); \
+    free(*(void**) pinstance);                     \
+  }
+
+#define destroy_static_code(struct_name)                  \
   static void(struct_name##_##destroy)(void* pinstance) { \
     (struct_name##_##uninit)(*(void**) pinstance);        \
     free(*(void**) pinstance);                            \
   }
 
-#define header_code(struct_name)                         \
+#define header_code(struct_name)                  \
+  void(struct_name##_##destroy)(void* pinstance); \
+  void(struct_name##_##init)(void* instance);     \
+  void(struct_name##_##uninit)(void* instance);
+
+#define header_static_code(struct_name)                  \
   static void(struct_name##_##destroy)(void* pinstance); \
   static void(struct_name##_##init)(void* instance);     \
   static void(struct_name##_##uninit)(void* instance);
 
-static true_inline void _generic_release_(void* pinstance) {
+static void _generic_release_(void* pinstance) {
   free(*(void**) pinstance);
 }
 
