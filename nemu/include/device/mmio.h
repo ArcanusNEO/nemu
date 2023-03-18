@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-typedef void(*mmio_callback_t)(paddr_t, int, bool);
+typedef void (*mmio_callback_t)(paddr_t, int, bool);
 
 void* add_mmio_map(paddr_t, int, mmio_callback_t);
 int is_mmio(paddr_t);

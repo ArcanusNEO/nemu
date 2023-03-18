@@ -4,10 +4,10 @@
 /* http://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming */
 
 #define SERIAL_PORT 0x3F8
-#define CH_OFFSET 0
-#define LSR_OFFSET 5		/* line status register */
+#define CH_OFFSET   0
+#define LSR_OFFSET  5 /* line status register */
 
-static uint8_t *serial_port_base;
+static uint8_t* serial_port_base;
 
 void serial_io_handler(ioaddr_t addr, int len, bool is_write) {
   if (is_write) {

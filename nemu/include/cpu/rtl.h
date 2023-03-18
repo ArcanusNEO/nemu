@@ -12,54 +12,61 @@ static inline void rtl_li(rtlreg_t* dest, uint32_t imm) {
   *dest = imm;
 }
 
-#define c_add(a, b) ((a) + (b))
-#define c_sub(a, b) ((a) - (b))
-#define c_and(a, b) ((a) & (b))
-#define c_or(a, b)  ((a) | (b))
-#define c_xor(a, b) ((a) ^ (b))
-#define c_shl(a, b) ((a) << (b))
-#define c_shr(a, b) ((a) >> (b))
-#define c_sar(a, b) ((int32_t)(a) >> (b))
-#define c_slt(a, b) ((int32_t)(a) < (int32_t)(b))
+#define c_add(a, b)  ((a) + (b))
+#define c_sub(a, b)  ((a) - (b))
+#define c_and(a, b)  ((a) & (b))
+#define c_or(a, b)   ((a) | (b))
+#define c_xor(a, b)  ((a) ^ (b))
+#define c_shl(a, b)  ((a) << (b))
+#define c_shr(a, b)  ((a) >> (b))
+#define c_sar(a, b)  ((int32_t) (a) >> (b))
+#define c_slt(a, b)  ((int32_t) (a) < (int32_t) (b))
 #define c_sltu(a, b) ((a) < (b))
 
-#define make_rtl_arith_logic(name) \
-  static inline void concat(rtl_, name) (rtlreg_t* dest, const rtlreg_t* src1, const rtlreg_t* src2) { \
-    *dest = concat(c_, name) (*src1, *src2); \
-  } \
-  static inline void concat3(rtl_, name, i) (rtlreg_t* dest, const rtlreg_t* src1, int imm) { \
-    *dest = concat(c_, name) (*src1, imm); \
+#define make_rtl_arith_logic(name)                                 \
+  static inline void concat(rtl_, name)(                           \
+    rtlreg_t * dest, const rtlreg_t* src1, const rtlreg_t* src2) { \
+    *dest = concat(c_, name)(*src1, *src2);                        \
+  }                                                                \
+  static inline void concat3(rtl_, name, i)(                       \
+    rtlreg_t * dest, const rtlreg_t* src1, int imm) {              \
+    *dest = concat(c_, name)(*src1, imm);                          \
   }
 
+make_rtl_arith_logic(add) make_rtl_arith_logic(sub) make_rtl_arith_logic(and)
+  make_rtl_arith_logic(or) make_rtl_arith_logic(xor) make_rtl_arith_logic(shl)
+    make_rtl_arith_logic(shr) make_rtl_arith_logic(sar)
+      make_rtl_arith_logic(slt) make_rtl_arith_logic(sltu)
 
-make_rtl_arith_logic(add)
-make_rtl_arith_logic(sub)
-make_rtl_arith_logic(and)
-make_rtl_arith_logic(or)
-make_rtl_arith_logic(xor)
-make_rtl_arith_logic(shl)
-make_rtl_arith_logic(shr)
-make_rtl_arith_logic(sar)
-make_rtl_arith_logic(slt)
-make_rtl_arith_logic(sltu)
-
-static inline void rtl_mul(rtlreg_t* dest_hi, rtlreg_t* dest_lo, const rtlreg_t* src1, const rtlreg_t* src2) {
-  asm volatile("mul %3" : "=d"(*dest_hi), "=a"(*dest_lo) : "a"(*src1), "r"(*src2));
+        static inline void rtl_mul(rtlreg_t* dest_hi, rtlreg_t* dest_lo,
+          const rtlreg_t* src1, const rtlreg_t* src2) {
+  asm volatile("mul %3"
+               : "=d"(*dest_hi), "=a"(*dest_lo)
+               : "a"(*src1), "r"(*src2));
 }
 
-static inline void rtl_imul(rtlreg_t* dest_hi, rtlreg_t* dest_lo, const rtlreg_t* src1, const rtlreg_t* src2) {
-  asm volatile("imul %3" : "=d"(*dest_hi), "=a"(*dest_lo) : "a"(*src1), "r"(*src2));
+static inline void rtl_imul(rtlreg_t* dest_hi, rtlreg_t* dest_lo,
+  const rtlreg_t* src1, const rtlreg_t* src2) {
+  asm volatile("imul %3"
+               : "=d"(*dest_hi), "=a"(*dest_lo)
+               : "a"(*src1), "r"(*src2));
 }
 
-static inline void rtl_div(rtlreg_t* q, rtlreg_t* r, const rtlreg_t* src1_hi, const rtlreg_t* src1_lo, const rtlreg_t* src2) {
-  asm volatile("div %4" : "=a"(*q), "=d"(*r) : "d"(*src1_hi), "a"(*src1_lo), "r"(*src2));
+static inline void rtl_div(rtlreg_t* q, rtlreg_t* r, const rtlreg_t* src1_hi,
+  const rtlreg_t* src1_lo, const rtlreg_t* src2) {
+  asm volatile("div %4"
+               : "=a"(*q), "=d"(*r)
+               : "d"(*src1_hi), "a"(*src1_lo), "r"(*src2));
 }
 
-static inline void rtl_idiv(rtlreg_t* q, rtlreg_t* r, const rtlreg_t* src1_hi, const rtlreg_t* src1_lo, const rtlreg_t* src2) {
-  asm volatile("idiv %4" : "=a"(*q), "=d"(*r) : "d"(*src1_hi), "a"(*src1_lo), "r"(*src2));
+static inline void rtl_idiv(rtlreg_t* q, rtlreg_t* r, const rtlreg_t* src1_hi,
+  const rtlreg_t* src1_lo, const rtlreg_t* src2) {
+  asm volatile("idiv %4"
+               : "=a"(*q), "=d"(*r)
+               : "d"(*src1_hi), "a"(*src1_lo), "r"(*src2));
 }
 
-static inline void rtl_lm(rtlreg_t *dest, const rtlreg_t* addr, int len) {
+static inline void rtl_lm(rtlreg_t* dest, const rtlreg_t* addr, int len) {
   *dest = vaddr_read(*addr, len);
 }
 
@@ -95,36 +102,30 @@ static inline void rtl_sr_l(int r, const rtlreg_t* src1) {
 
 static inline void rtl_lr(rtlreg_t* dest, int r, int width) {
   switch (width) {
-    case 4: rtl_lr_l(dest, r); return;
-    case 1: rtl_lr_b(dest, r); return;
-    case 2: rtl_lr_w(dest, r); return;
-    default: assert(0);
+    case 4 : rtl_lr_l(dest, r); return;
+    case 1 : rtl_lr_b(dest, r); return;
+    case 2 : rtl_lr_w(dest, r); return;
+    default : assert(0);
   }
 }
 
 static inline void rtl_sr(int r, int width, const rtlreg_t* src1) {
   switch (width) {
-    case 4: rtl_sr_l(r, src1); return;
-    case 1: rtl_sr_b(r, src1); return;
-    case 2: rtl_sr_w(r, src1); return;
-    default: assert(0);
+    case 4 : rtl_sr_l(r, src1); return;
+    case 1 : rtl_sr_b(r, src1); return;
+    case 2 : rtl_sr_w(r, src1); return;
+    default : assert(0);
   }
 }
 
-#define make_rtl_setget_eflags(f) \
-  static inline void concat(rtl_set_, f) (const rtlreg_t* src) { \
-    TODO(); \
-  } \
-  static inline void concat(rtl_get_, f) (rtlreg_t* dest) { \
-    TODO(); \
-  }
+#define make_rtl_setget_eflags(f)                                         \
+  static inline void concat(rtl_set_, f)(const rtlreg_t* src) { TODO(); } \
+  static inline void concat(rtl_get_, f)(rtlreg_t * dest) { TODO(); }
 
-make_rtl_setget_eflags(CF)
-make_rtl_setget_eflags(OF)
-make_rtl_setget_eflags(ZF)
-make_rtl_setget_eflags(SF)
+make_rtl_setget_eflags(CF) make_rtl_setget_eflags(OF) make_rtl_setget_eflags(ZF)
+  make_rtl_setget_eflags(SF)
 
-static inline void rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
+    static inline void rtl_mv(rtlreg_t* dest, const rtlreg_t* src1) {
   // dest <- src1
   TODO();
 }

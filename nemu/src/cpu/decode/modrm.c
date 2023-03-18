@@ -1,7 +1,7 @@
 #include "cpu/exec.h"
 #include "cpu/rtl.h"
 
-void load_addr(vaddr_t *eip, ModR_M *m, Operand *rm) {
+void load_addr(vaddr_t* eip, ModR_M* m, Operand* rm) {
   assert(m->mod != 3);
 
   int32_t disp = 0;
@@ -15,23 +15,30 @@ void load_addr(vaddr_t *eip, ModR_M *m, Operand *rm) {
     base_reg = s.base;
     scale = s.ss;
 
-    if (s.index != R_ESP) { index_reg = s.index; }
-  }
-  else {
+    if (s.index != R_ESP) {
+      index_reg = s.index;
+    }
+  } else {
     /* no SIB */
     base_reg = m->R_M;
   }
 
   if (m->mod == 0) {
-    if (base_reg == R_EBP) { base_reg = -1; }
-    else { disp_size = 0; }
+    if (base_reg == R_EBP) {
+      base_reg = -1;
+    } else {
+      disp_size = 0;
+    }
+  } else if (m->mod == 1) {
+    disp_size = 1;
   }
-  else if (m->mod == 1) { disp_size = 1; }
 
   if (disp_size != 0) {
     /* has disp */
     disp = instr_fetch(eip, disp_size);
-    if (disp_size == 1) { disp = (int8_t)disp; }
+    if (disp_size == 1) {
+      disp = (int8_t) disp;
+    }
 
     rtl_addi(&rm->addr, &rm->addr, disp);
   }
@@ -52,24 +59,27 @@ void load_addr(vaddr_t *eip, ModR_M *m, Operand *rm) {
 
   if (disp_size != 0) {
     /* has disp */
-    sprintf(disp_buf, "%s%#x", (disp < 0 ? "-" : ""), (disp < 0 ? -disp : disp));
+    sprintf(
+      disp_buf, "%s%#x", (disp < 0 ? "-" : ""), (disp < 0 ? -disp : disp));
+  } else {
+    disp_buf[0] = '\0';
   }
-  else { disp_buf[0] = '\0'; }
 
-  if (base_reg == -1) { base_buf[0] = '\0'; }
-  else { 
+  if (base_reg == -1) {
+    base_buf[0] = '\0';
+  } else {
     sprintf(base_buf, "%%%s", reg_name(base_reg, 4));
   }
 
-  if (index_reg == -1) { index_buf[0] = '\0'; }
-  else { 
+  if (index_reg == -1) {
+    index_buf[0] = '\0';
+  } else {
     sprintf(index_buf, ",%%%s,%d", reg_name(index_reg, 4), 1 << scale);
   }
 
   if (base_reg == -1 && index_reg == -1) {
     sprintf(rm->str, "%s", disp_buf);
-  }
-  else {
+  } else {
     sprintf(rm->str, "%s(%s%s)", disp_buf, base_buf, index_buf);
   }
 #endif
@@ -77,7 +87,8 @@ void load_addr(vaddr_t *eip, ModR_M *m, Operand *rm) {
   rm->type = OP_TYPE_MEM;
 }
 
-void read_ModR_M(vaddr_t *eip, Operand *rm, bool load_rm_val, Operand *reg, bool load_reg_val) {
+void read_ModR_M(vaddr_t* eip, Operand* rm, bool load_rm_val, Operand* reg,
+  bool load_reg_val) {
   ModR_M m;
   m.val = instr_fetch(eip, 1);
   decoding.ext_opcode = m.opcode;
@@ -103,8 +114,7 @@ void read_ModR_M(vaddr_t *eip, Operand *rm, bool load_rm_val, Operand *reg, bool
 #ifdef DEBUG
     sprintf(rm->str, "%%%s", reg_name(m.R_M, rm->width));
 #endif
-  }
-  else {
+  } else {
     load_addr(eip, &m, rm);
     if (load_rm_val) {
       rtl_lm(&rm->val, &rm->addr, rm->width);

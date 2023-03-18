@@ -11,8 +11,8 @@
 #include "macro.h"
 #include "neoc.h"
 
-#include <stdint.h>
 #include <assert.h>
+#include <stdint.h>
 #include <string.h>
 
 typedef uint8_t bool;
@@ -25,6 +25,6 @@ typedef uint32_t vaddr_t;
 typedef uint16_t ioaddr_t;
 
 #define false 0
-#define true 1
+#define true  1
 
 #endif

@@ -1,9 +1,11 @@
 #include "nemu.h"
 
-#define pmem_rw(addr, type) *(type *)({\
-    Assert(addr < PMEM_SIZE, "physical address(0x%08x) is out of bound", addr); \
-    guest_to_host(addr); \
-    })
+#define pmem_rw(addr, type)                                                \
+  *(type*) ({                                                              \
+    Assert(                                                                \
+      addr < PMEM_SIZE, "physical address(0x%08x) is out of bound", addr); \
+    guest_to_host(addr);                                                   \
+  })
 
 uint8_t pmem[PMEM_SIZE];
 
