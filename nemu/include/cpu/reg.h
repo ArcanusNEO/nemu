@@ -14,7 +14,7 @@ extern void* regp[];
        -1 :                                                              \
        alphabet_order((str)[2]) < 0 ?                                    \
        alphabet_order((str)[1]) * 19 + alphabet_order((str)[0]) :        \
-       alphabet_order((str)[2]) * 19 + alphabet_order((str)[1]) + 442) + \
+       alphabet_order((str)[2]) * 19 + alphabet_order((str)[1]) + 290) + \
     1)
 
 #define REG_32(str) (alphabet_order((str)[2]) > 0)
