@@ -33,46 +33,49 @@ typedef struct {
 #ifdef DEBUG
   char assembly[80];
   char asm_buf[128];
-  char *p;
+  char* p;
 #endif
 } DecodeInfo;
 
 typedef union {
   struct {
-    uint8_t R_M		:3;
-    uint8_t reg		:3;
-    uint8_t mod		:2;
+    uint8_t R_M : 3;
+    uint8_t reg : 3;
+    uint8_t mod : 2;
   };
+
   struct {
-    uint8_t dont_care	:3;
-    uint8_t opcode		:3;
+    uint8_t dont_care : 3;
+    uint8_t opcode    : 3;
   };
+
   uint8_t val;
 } ModR_M;
 
 typedef union {
   struct {
-    uint8_t base	:3;
-    uint8_t index	:3;
-    uint8_t ss		:2;
+    uint8_t base  : 3;
+    uint8_t index : 3;
+    uint8_t ss    : 2;
   };
+
   uint8_t val;
 } SIB;
 
-void load_addr(vaddr_t *, ModR_M *, Operand *);
-void read_ModR_M(vaddr_t *, Operand *, bool, Operand *, bool);
+void load_addr(vaddr_t*, ModR_M*, Operand*);
+void read_ModR_M(vaddr_t*, Operand*, bool, Operand*, bool);
 
-void operand_write(Operand *, rtlreg_t *);
+void operand_write(Operand*, rtlreg_t*);
 
 /* shared by all helper functions */
 extern DecodeInfo decoding;
 
-#define id_src (&decoding.src)
+#define id_src  (&decoding.src)
 #define id_src2 (&decoding.src2)
 #define id_dest (&decoding.dest)
 
-#define make_DHelper(name) void concat(decode_, name) (vaddr_t *eip)
-typedef void (*DHelper) (vaddr_t *);
+#define make_DHelper(name) void concat(decode_, name)(vaddr_t * eip)
+typedef void (*DHelper)(vaddr_t*);
 
 make_DHelper(I2E);
 make_DHelper(I2a);

@@ -6,7 +6,8 @@ DecodeInfo decoding;
 rtlreg_t t0, t1, t2, t3;
 const rtlreg_t tzero = 0;
 
-#define make_DopHelper(name) void concat(decode_op_, name) (vaddr_t *eip, Operand *op, bool load_val)
+#define make_DopHelper(name) \
+  void concat(decode_op_, name)(vaddr_t * eip, Operand * op, bool load_val)
 
 /* Refer to Appendix A in i386 manual for the explanations of these abbreviations */
 
@@ -89,7 +90,8 @@ static inline make_DopHelper(r) {
  * Rd
  * Sw
  */
-static inline void decode_op_rm(vaddr_t *eip, Operand *rm, bool load_rm_val, Operand *reg, bool load_reg_val) {
+static inline void decode_op_rm(vaddr_t* eip, Operand* rm, bool load_rm_val,
+  Operand* reg, bool load_reg_val) {
   read_ModR_M(eip, rm, load_rm_val, reg, load_reg_val);
 }
 
@@ -304,8 +306,12 @@ make_DHelper(out_a2dx) {
 #endif
 }
 
-void operand_write(Operand *op, rtlreg_t* src) {
-  if (op->type == OP_TYPE_REG) { rtl_sr(op->reg, op->width, src); }
-  else if (op->type == OP_TYPE_MEM) { rtl_sm(&op->addr, op->width, src); }
-  else { assert(0); }
+void operand_write(Operand* op, rtlreg_t* src) {
+  if (op->type == OP_TYPE_REG) {
+    rtl_sr(op->reg, op->width, src);
+  } else if (op->type == OP_TYPE_MEM) {
+    rtl_sm(&op->addr, op->width, src);
+  } else {
+    assert(0);
+  }
 }

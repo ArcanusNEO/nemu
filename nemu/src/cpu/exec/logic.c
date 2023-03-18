@@ -53,8 +53,8 @@ make_EHelper(setcc) {
   print_asm("set%s %s", get_cc_name(subcode), id_dest->str);
 }
 
-make_EHelper(not) {
+make_EHelper(not ) {
   TODO();
 
-  print_asm_template1(not);
+  print_asm_template1(not );
 }
