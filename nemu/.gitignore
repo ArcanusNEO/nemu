@@ -6,3 +6,5 @@
 !.gitignore
 !README.md
 !runall.sh
+
+!*.test
