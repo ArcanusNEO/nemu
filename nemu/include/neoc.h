@@ -102,4 +102,6 @@ static void _generic_release_(void* pinstance) {
 typedef struct {
 } null_t;
 
+#include "neoc/list.h"
+
 #endif  // _NEOC_H_

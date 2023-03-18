@@ -1,7 +1,5 @@
 #include "neoc.h"
 
-#include "list.h"
-
 int init_monitor(int, char*[], int, void*);
 void ui_mainloop(int);
 

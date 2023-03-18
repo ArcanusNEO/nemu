@@ -7,7 +7,6 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
-#include "list.h"
 #include "monitor/monitor.h"
 #include "monitor/watchpoint.h"
 #include "neoc.h"

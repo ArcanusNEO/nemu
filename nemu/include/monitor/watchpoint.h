@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#include "list.h"
+#include "neoc.h"
 
 typedef struct watchpoint {
   unsigned no;

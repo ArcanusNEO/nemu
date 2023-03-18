@@ -4,7 +4,7 @@
 #include "cpu/reg.h"
 #include "memory/memory.h"
 
-#include "list.h"
+#include "neoc.h"
 
 static unsigned wp_counter;
 static list_t* wp_pool;
