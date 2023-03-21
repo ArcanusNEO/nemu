@@ -47,57 +47,42 @@
 #define bind_fn(struct_name, instance, mbrfn) \
   (instance->mbrfn = struct_name##_##mbrfn)
 
-#define create(struct_name)                              \
-  ({                                                     \
-    void* instance = malloc(sizeof(struct struct_name)); \
-    (struct_name##_##init)(instance);                    \
-    instance;                                            \
-  })
+#define header_code(struct_name)               \
+  void*(struct_name##_init)(void* instance);   \
+  void*(struct_name##_uninit)(void* instance); \
+  void*(struct_name##_release)(void* pinstance);
 
-#define destroy(struct_name, instance)  \
-  do {                                  \
-    (struct_name##_##uninit)(instance); \
-    free(instance);                     \
-  } while (0)
+#define header_static_code(struct_name)               \
+  static void*(struct_name##_init)(void* instance);   \
+  static void*(struct_name##_uninit)(void* instance); \
+  static void*(struct_name##_release)(void* pinstance);
 
-#define destroy_code(struct_name)                  \
-  void(struct_name##_##destroy)(void* pinstance) { \
-    (struct_name##_##uninit)(*(void**) pinstance); \
-    free(*(void**) pinstance);                     \
+#define release_code(struct_name)                                           \
+  void*(struct_name##_release)(void* pinstance) {                           \
+    if (pinstance == NULL || *(void**) pinstance == NULL) return pinstance; \
+    struct struct_name* instance = *(struct struct_name**) pinstance;       \
+    if (instance->_release) free((struct_name##_uninit)(instance));         \
+    else (struct_name##_uninit)(instance);                                  \
+    return pinstance;                                                       \
   }
 
-#define destroy_static_code(struct_name)                  \
-  static void(struct_name##_##destroy)(void* pinstance) { \
-    (struct_name##_##uninit)(*(void**) pinstance);        \
-    free(*(void**) pinstance);                            \
-  }
+#define release_static_code(struct_name) static release_code(struct_name)
 
-#define header_code(struct_name)                  \
-  void(struct_name##_##destroy)(void* pinstance); \
-  void(struct_name##_##init)(void* instance);     \
-  void(struct_name##_##uninit)(void* instance);
-
-#define header_static_code(struct_name)                  \
-  static void(struct_name##_##destroy)(void* pinstance); \
-  static void(struct_name##_##init)(void* instance);     \
-  static void(struct_name##_##uninit)(void* instance);
-
-static void _generic_release_(void* pinstance) {
+static void* _generic_release_(void* pinstance) {
   free(*(void**) pinstance);
+  return pinstance;
 }
 
-#define smart __attribute__((cleanup(_generic_release_)))
-
-#define smart_class(struct_name) \
-  __attribute__((cleanup(struct_name##_##destroy)))
+#define smart                    __attribute__((cleanup(_generic_release_)))
+#define smart_class(struct_name) __attribute__((cleanup(struct_name##_release)))
+#define auto_class(struct_name)  __attribute__((cleanup(struct_name##_uninit)))
 
 #define smart_def(struct_name, id)                  \
   smart_class(struct_name) struct struct_name* id = \
-    malloc(sizeof(struct struct_name));             \
-  (struct_name##_##init)(id)
+    (struct_name##_init)(malloc(sizeof(struct struct_name)))
 
 #define attr_packed __attribute__((packed))
-#define inheritable attr_packed
+#define inheritable __attribute__((packed))
 
 typedef struct {
 } null_t;

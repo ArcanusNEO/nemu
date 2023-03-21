@@ -23,14 +23,6 @@ static void* list_pop(struct list* this, list_node_t* selection) {
   return payload;
 }
 
-static void list_set_release_payload(struct list* this, int flag) {
-  this->_release_payload = flag;
-}
-
-static int list_get_release_payload(struct list* this) {
-  return this->_release_payload;
-}
-
 static int list_empty(struct list* this) {
   return this->_ == NULL;
 }
@@ -87,14 +79,14 @@ static void* list_pop_front(struct list* this) {
   return list_pop(this, this->_);
 }
 
-void list_init(void* instance) {
+void* list_init(void* instance) {
+  if (instance == NULL) return NULL;
   list_t* this = instance;
+  this->_release = 1;
+  this->_release_payload = 1;
   this->_ = NULL;
   this->_size = 0;
-  this->_release_payload = 1;
 
-  bind_fn(list, this, set_release_payload);
-  bind_fn(list, this, get_release_payload);
   bind_fn(list, this, empty);
   bind_fn(list, this, size);
   bind_fn(list, this, push_front);
@@ -103,12 +95,14 @@ void list_init(void* instance) {
   bind_fn(list, this, pop_back);
   bind_fn(list, this, pop);
   bind_fn(list, this, push);
+  return instance;
 }
 
-void list_uninit(void* instance) {
+void* list_uninit(void* instance) {
+  if (instance == NULL) return NULL;
   list_t* this = instance;
-
   while (!list_empty(this)) list_pop_back(this);
+  return instance;
 }
 
-destroy_code(list);
+release_code(list);

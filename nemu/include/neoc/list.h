@@ -10,12 +10,12 @@ typedef struct list_node {
 } list_node_t;
 
 typedef struct list {
+  int _release         : 1;
+  int _release_payload : 1;
+
   list_node_t* _;
   size_t _size;
-  int _release_payload;
 
-  void (*set_release_payload)(struct list* this, int flag);
-  int (*get_release_payload)(struct list* this);
   int (*empty)(struct list* this);
   size_t (*size)(struct list* this);
   void* (*push_front)(struct list* this, void* payload);
@@ -29,10 +29,6 @@ typedef struct list {
 
 // for auto suggestions
 
-// void (*set_release_payload)(struct list* this, int flag);
-#define set_release_payload set_release_payload
-// int (*get_release_payload)(struct list* this);
-#define get_release_payload get_release_payload
 // int (*empty)(struct list* this);
 #define empty empty
 // size_t (*size)(struct list* this);
