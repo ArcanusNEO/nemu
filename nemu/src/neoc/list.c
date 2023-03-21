@@ -102,7 +102,7 @@ void* list_uninit(void* instance) {
   if (instance == NULL) return NULL;
   list_t* this = instance;
   while (!list_empty(this)) list_pop_back(this);
-  printf("%p\n", instance);
+  printf("%p\n%d\n%d\n", this, this->_release, this->_release_payload);
   return instance;
 }
 
