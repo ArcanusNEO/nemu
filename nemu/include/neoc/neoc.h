@@ -61,8 +61,7 @@
   void*(struct_name##_release)(void* pinstance) {                           \
     if (pinstance == NULL || *(void**) pinstance == NULL) return pinstance; \
     struct struct_name* instance = *(struct struct_name**) pinstance;       \
-    if (instance->_release) free((struct_name##_uninit)(instance));         \
-    else (struct_name##_uninit)(instance);                                  \
+    free((struct_name##_uninit)(instance));                                 \
     return pinstance;                                                       \
   }
 

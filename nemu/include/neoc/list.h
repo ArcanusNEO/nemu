@@ -10,7 +10,7 @@ typedef struct list_node {
 } list_node_t;
 
 typedef struct list {
-  int _release         : 1;
+  int _uninit          : 1;
   int _release_payload : 1;
 
   list_node_t* _;

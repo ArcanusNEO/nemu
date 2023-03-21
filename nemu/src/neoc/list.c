@@ -82,7 +82,7 @@ static void* list_pop_front(struct list* this) {
 void* list_init(void* instance) {
   if (instance == NULL) return NULL;
   list_t* this = instance;
-  this->_release = 1;
+  this->_uninit = 1;
   this->_release_payload = 1;
   this->_ = NULL;
   this->_size = 0;
@@ -99,8 +99,8 @@ void* list_init(void* instance) {
 }
 
 void* list_uninit(void* instance) {
-  if (instance == NULL) return NULL;
   list_t* this = instance;
+  if (this == NULL || !this->_uninit) return NULL;
   while (!list_empty(this)) list_pop_back(this);
   return instance;
 }
