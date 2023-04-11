@@ -31,44 +31,45 @@ static size_t list_size(struct list* this) {
   return this->_size;
 }
 
-static void* _insert_first_(struct list* this, void* payload) {
-  this->_ = malloc(sizeof(list_node_t));
-  this->_->payload = payload;
-  this->_->prev = this->_->next = this->_;
+static list_node_t* _list_insert_first_(struct list* this, void* payload) {
+  list_node_t* nd = this->_ = malloc(sizeof(list_node_t));
+  nd->payload = payload;
+  nd->prev = nd->next = nd;
   this->_size = 1;
-  return payload;
+  return nd;
 }
 
-static void _insert_(list_node_t* node, list_node_t* prev, list_node_t* next) {
+static void _list_insert_(
+  list_node_t* node, list_node_t* prev, list_node_t* next) {
   node->next = next;
   node->prev = prev;
   prev->next = node;
   next->prev = node;
 }
 
-static void* list_push(struct list* this, void* payload, list_node_t* prev) {
-  if (this->_ == NULL) return _insert_first_(this, payload);
+static list_node_t* list_push(
+  struct list* this, void* payload, list_node_t* prev) {
+  if (this->_ == NULL) return _list_insert_first_(this, payload);
   if (prev == NULL) prev = this->_->prev;
 
   list_node_t* next = prev->next;
 
-  list_node_t* p = malloc(sizeof(list_node_t));
-  p->payload = payload;
+  list_node_t* nd = malloc(sizeof(list_node_t));
+  nd->payload = payload;
 
-  _insert_(p, prev, next);
+  _list_insert_(nd, prev, next);
   ++this->_size;
 
-  return payload;
+  return nd;
 }
 
-static void* list_push_back(struct list* this, void* payload) {
+static list_node_t* list_push_back(struct list* this, void* payload) {
   return list_push(this, payload, NULL);
 }
 
-static void* list_push_front(struct list* this, void* payload) {
+static list_node_t* list_push_front(struct list* this, void* payload) {
   list_push_back(this, payload);
-  this->_ = this->_->prev;
-  return payload;
+  return this->_ = this->_->prev;
 }
 
 static void* list_pop_back(struct list* this) {

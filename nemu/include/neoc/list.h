@@ -3,14 +3,17 @@
 
 #include "neoc.h"
 
-typedef struct list_node {
+typedef struct list_node list_node_t;
+typedef struct list list_t;
+
+struct list_node {
   struct list_node* prev;
   struct list_node* next;
   void* payload;
-} list_node_t;
+};
 
-typedef struct list {
-  int _uninit;
+struct list {
+  int _uninit : 1;
   void (*_payload_releaser)(void*);
 
   list_node_t* _;
@@ -18,14 +21,13 @@ typedef struct list {
 
   int (*empty)(struct list* this);
   size_t (*size)(struct list* this);
-  void* (*push_front)(struct list* this, void* payload);
-  void* (*push_back)(struct list* this, void* payload);
+  list_node_t* (*push_front)(struct list* this, void* payload);
+  list_node_t* (*push_back)(struct list* this, void* payload);
   void* (*pop_front)(struct list* this);
   void* (*pop_back)(struct list* this);
   void* (*pop)(struct list* this, list_node_t* selection);
-  void* (*push)(struct list* this, void* payload, list_node_t* prev);
-
-} list_t;
+  list_node_t* (*push)(struct list* this, void* payload, list_node_t* prev);
+};
 
 // for auto suggestions
 #if !defined(NEOC_NO_AUTO_SUGGESTIONS) && \
