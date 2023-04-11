@@ -10,8 +10,8 @@ typedef struct list_node {
 } list_node_t;
 
 typedef struct list {
-  int _uninit          : 1;
-  int _release_payload : 1;
+  int _uninit;
+  void (*_payload_releaser)(void*);
 
   list_node_t* _;
   size_t _size;
@@ -28,23 +28,17 @@ typedef struct list {
 } list_t;
 
 // for auto suggestions
-
-// int (*empty)(struct list* this);
-#define empty empty
-// size_t (*size)(struct list* this);
-#define size size
-// void* (*push_front)(struct list* this, void* payload);
-#define push_front push_front
-// void* (*push_back)(struct list* this, void* payload);
-#define push_back push_back
-// void* (*pop_front)(struct list* this);
-#define pop_front pop_front
-// void* (*pop_back)(struct list* this);
-#define pop_back pop_back
-// void* (*pop)(struct list* this, list_node_t* selection);
-#define pop pop
-// void* (*push)(struct list* this, void* payload, list_node_t* prev)
-#define push push
+#if !defined(NEOC_NO_AUTO_SUGGESTIONS) && \
+  (defined(NEOC_DEBUG) || !defined(NEOC_RELEASE))
+  #define empty      empty
+  #define size       size
+  #define push_front push_front
+  #define push_back  push_back
+  #define pop_front  pop_front
+  #define pop_back   pop_back
+  #define pop        pop
+  #define push       push
+#endif
 
 header_code(list);
 

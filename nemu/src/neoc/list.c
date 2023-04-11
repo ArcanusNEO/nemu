@@ -15,7 +15,7 @@ static void* list_pop(struct list* this, list_node_t* selection) {
 
   --this->_size;
 
-  if (this->_release_payload) free(payload);
+  this->_payload_releaser(payload);
   free(selection);
 
   if (this->_size == 0) this->_ = NULL;
@@ -83,7 +83,7 @@ void* list_init(void* instance) {
   if (instance == NULL) return NULL;
   list_t* this = instance;
   this->_uninit = 1;
-  this->_release_payload = 1;
+  this->_payload_releaser = free;
   this->_ = NULL;
   this->_size = 0;
 
