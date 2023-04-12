@@ -14,7 +14,7 @@ struct list_node {
 
 struct list {
   int _uninit : 1;
-  void (*_payload_releaser)(void*);
+  void (*_releaser)(void*);
 
   list_node_t* _;
   size_t _size;
