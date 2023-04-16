@@ -39,7 +39,9 @@ static inline make_DopHelper(SI) {
    *
    op->simm = ???
    */
-  TODO();
+  rtlreg_t imm = instr_fetch(eip, op->width);
+  rtl_sext(&imm, &imm, op->width);
+  op->simm = imm;
 
   rtl_li(&op->val, op->simm);
 
