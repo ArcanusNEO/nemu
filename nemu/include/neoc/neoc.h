@@ -26,12 +26,46 @@
 #include <wchar.h>
 #include <wctype.h>
 
+#define reducei(reducei_helper, ...)                   \
+  ({                                                   \
+    typeof(__VA_ARGS__) _a_[] = {__VA_ARGS__};         \
+    typeof(__VA_ARGS__) _r_ = _a_[0];                  \
+    for (size_t _i_ = 1; _i_ < lengthof(_a_); ++_i_) { \
+      reducei_helper(_r_, _a_[_i_]);                   \
+    }                                                  \
+    _r_;                                               \
+  })
+
+#define max_helper(i, j)      \
+  do {                        \
+    if ((i) < (j)) (i) = (j); \
+  } while (0)
+#define max(...) reducei(max_helper, __VA_ARGS__)
+
+#define min_helper(i, j)      \
+  do {                        \
+    if ((i) > (j)) (i) = (j); \
+  } while (0)
+#define min(...) reducei(min_helper, __VA_ARGS__)
+
+#define swap(vari, varj)           \
+  do {                             \
+    typeof(&(vari)) _i_ = &(vari); \
+    typeof(&(varj)) _j_ = &(varj); \
+    typeof(vari) _t_ = *_i_;       \
+    *_i_ = *_j_;                   \
+    *_j_ = _t_;                    \
+  } while (0)
+
+#define likely(cond)   __builtin_expect(!!(cond), 1)
+#define unlikely(cond) __builtin_expect(!!(cond), 0)
+
 #define alphabet_order(ch)                        \
   (((ch) >= 'A' && (ch) <= 'Z')    ? (ch) - 'A' : \
       ((ch) >= 'a' && (ch) <= 'z') ? (ch) - 'a' : \
                                      -1)
 
-#define true_inline __attribute__((always_inline)) inline
+#define true_inline inline __attribute__((always_inline))
 
 #define quote_helper(content) #content
 #define quote(content)        quote_helper(content)
@@ -67,8 +101,8 @@
 #define release_code(struct_name)                                           \
   void*(struct_name##_release)(void* pinstance) {                           \
     if (pinstance == NULL || *(void**) pinstance == NULL) return pinstance; \
-    struct struct_name* instance = *(struct struct_name**) pinstance;       \
-    free((struct_name##_uninit)(instance));                                 \
+    struct struct_name* _instance_ = *(struct struct_name**) pinstance;     \
+    free((struct_name##_uninit)(_instance_));                               \
     return pinstance;                                                       \
   }
 
