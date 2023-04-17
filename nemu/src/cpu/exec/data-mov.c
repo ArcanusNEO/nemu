@@ -5,6 +5,14 @@ make_EHelper(mov) {
   print_asm_template2(mov);
 }
 
+make_EHelper(movfromc) {
+  TODO();
+}
+
+make_EHelper(movtoc) {
+  TODO();
+}
+
 make_EHelper(push) {
   rtl_push(&id_dest->val);
 
