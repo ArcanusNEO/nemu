@@ -183,6 +183,18 @@ make_DHelper(I) {
   decode_op_I(eip, id_dest, true);
 }
 
+make_DHelper(SI) {
+  TODO();
+}
+
+make_DHelper(int3) {
+  TODO();
+}
+
+make_DHelper(J_gp5) {
+  TODO();
+}
+
 make_DHelper(r) {
   decode_op_r(eip, id_dest, true);
 }

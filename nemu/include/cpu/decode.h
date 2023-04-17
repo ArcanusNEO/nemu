@@ -90,7 +90,6 @@ make_DHelper(r);
 make_DHelper(E);
 make_DHelper(gp7_E);
 make_DHelper(test_I);
-make_DHelper(SI);
 make_DHelper(G2E);
 make_DHelper(E2G);
 

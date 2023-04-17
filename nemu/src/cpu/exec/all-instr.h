@@ -48,7 +48,7 @@ make_EHelper(shr);
 make_EHelper(shl);
 make_EHelper(ror);
 make_EHelper(rol);
-make_EHelper(not );
+make_EHelper(not);
 
 make_EHelper(operand_size);
 
