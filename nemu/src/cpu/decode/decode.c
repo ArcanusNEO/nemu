@@ -185,11 +185,13 @@ make_DHelper(I) {
 }
 
 make_DHelper(SI) {
-  TODO();
+  decode_op_SI(eip, id_dest, true);
 }
 
 make_DHelper(int3) {
-  TODO();
+  id_dest->type = OP_TYPE_IMM;
+  id_dest->imm = 3;
+  rtl_li(&id_dest->val, id_dest->imm);
 }
 
 make_DHelper(J_gp5) {
