@@ -44,6 +44,26 @@ make_rtl_arith_logic(sar);
 make_rtl_arith_logic(slt);
 make_rtl_arith_logic(sltu);
 
+static inline void rtl_ror(
+  rtlreg_t* dest, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+  uint32_t shifth = *src2 % (width * 8);
+  uint32_t shiftl = (width * 8) - shifth;
+  uint32_t h, l;
+  rtl_shr(&h, src1, &shifth);
+  rtl_shl(&l, src1, &shiftl);
+  rtl_or(dest, &h, &l);
+}
+
+static inline void rtl_rol(
+  rtlreg_t* dest, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+  uint32_t shifth = *src2 % (width * 8);
+  uint32_t shiftl = (width * 8) - shifth;
+  uint32_t h, l;
+  rtl_shl(&h, src1, &shifth);
+  rtl_shr(&l, src1, &shiftl);
+  rtl_or(dest, &h, &l);
+}
+
 static true_inline void rtl_mul(rtlreg_t* dest_hi, rtlreg_t* dest_lo,
   const rtlreg_t* src1, const rtlreg_t* src2) {
   asm volatile("mul %3"
