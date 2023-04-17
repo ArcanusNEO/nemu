@@ -197,7 +197,8 @@ static true_inline void rtl_sext(
   rtlreg_t msb;
   rtl_msb(&msb, src1, width);
   rtl_neg(&msb);
-  rtl_and(dest, src1, &msb);
+  rtl_shli(&msb, &msb, width * 8);
+  rtl_or(dest, src1, &msb);
 }
 
 static true_inline void rtl_update_ZF(const rtlreg_t* result, int width) {
