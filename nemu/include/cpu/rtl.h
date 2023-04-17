@@ -194,9 +194,9 @@ static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- signext(src1[(width * 8 - 1) .. 0])
   rtlreg_t msb;
   rtl_msb(&msb, src1, width);
-  Log("0x%0x", msb);
+  Log("0x%08x", msb);
   rtl_neg(&msb);
-  Log("0x%0x", msb);
+  Log("0x%08x", msb);
   rtl_and(dest, src1, &msb);
 }
 
