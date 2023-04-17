@@ -1,5 +1,7 @@
 #include "nemu.h"
 
+#include "device/mmio.h"
+
 #define pmem_rw(addr, type)                                                \
   *(type*) ({                                                              \
     Assert(                                                                \
