@@ -186,7 +186,7 @@ static inline void rtl_neq0(rtlreg_t* dest, const rtlreg_t* src1) {
 
 static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- src1[width * 8 - 1]
-  // Log("0x%08x\t0x%08x\t%d", *dest, *src1, width);
+  Log("0x%08x\t0x%08x\t%d", *dest, *src1, width);
   rtl_shri(dest, src1, width * 8 - 1);
   // Log("0x%08x", *dest);
   rtl_neq0(dest, dest);
