@@ -197,8 +197,9 @@ static true_inline void rtl_sext(
   rtlreg_t msb;
   rtl_msb(&msb, src1, width);
   rtl_neg(&msb);
-  rtl_shli(&msb, &msb, width * 8);
-  Log("0x%08x", msb);
+  rtl_shli(&msb, &msb, width * 4);
+  // for width == 8
+  rtl_shli(&msb, &msb, width * 4);
   rtl_or(dest, src1, &msb);
 }
 
