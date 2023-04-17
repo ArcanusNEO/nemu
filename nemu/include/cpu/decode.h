@@ -93,6 +93,8 @@ make_DHelper(test_I);
 make_DHelper(G2E);
 make_DHelper(E2G);
 
+make_DHelper(movzx_E2G);
+
 make_DHelper(int3);
 
 make_DHelper(J_gp5);

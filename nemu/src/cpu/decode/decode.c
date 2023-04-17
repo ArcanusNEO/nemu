@@ -129,6 +129,11 @@ make_DHelper(E2G) {
   decode_op_rm(eip, id_src, true, id_dest, true);
 }
 
+make_DHelper(movzx_E2G) {
+  id_src->width = 1 + (decoding.opcode & 1);
+  decode_op_rm(eip, id_src, true, id_dest, false);
+}
+
 make_DHelper(mov_E2G) {
   decode_op_rm(eip, id_src, true, id_dest, false);
 }
