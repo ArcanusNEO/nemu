@@ -11,36 +11,30 @@ make_EHelper(test) {
   print_asm_template2(test);
 }
 
+#define axo_helper(op)                          \
+  do {                                          \
+    rtl_##op(&t0, &id_dest->val, &id_src->val); \
+                                                \
+    rtl_set_OF(&tzero);                         \
+    rtl_set_CF(&tzero);                         \
+                                                \
+    rtl_update_ZFSF(&t0, id_dest->width);       \
+                                                \
+    operand_write(id_dest, &t0);                \
+                                                \
+    print_asm_template2(op);                    \
+  } while (0)
+
 make_EHelper(and) {
-  rtl_and(&t0, &id_dest->val, &id_src->val);
-
-  rtl_set_OF(&tzero);
-  rtl_set_CF(&tzero);
-
-  rtl_update_ZFSF(&t0, id_dest->width);
-
-  operand_write(id_dest, &t0);
-
-  print_asm_template2(and);
+  axo_helper(and);
 }
 
 make_EHelper(xor) {
-  rtl_xor(&t0, &id_dest->val, &id_src->val);
-
-  rtl_set_OF(&tzero);
-  rtl_set_CF(&tzero);
-
-  rtl_update_ZFSF(&t0, id_dest->width);
-
-  operand_write(id_dest, &t0);
-  
-  print_asm_template2(xor);
+  axo_helper(xor);
 }
 
 make_EHelper(or) {
-  TODO();
-
-  print_asm_template2(or);
+  axo_helper(or);
 }
 
 make_EHelper(sar) {
@@ -73,7 +67,9 @@ make_EHelper(setcc) {
 }
 
 make_EHelper(not) {
-  TODO();
+  t0 = id_dest->val;
+  rtl_not(&t0);
+  operand_write(id_dest, &t0);
 
   print_asm_template1(not);
 }
