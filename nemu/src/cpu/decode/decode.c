@@ -200,6 +200,7 @@ make_DHelper(int3) {
 }
 
 make_DHelper(J_gp5) {
+  // for use with call r/m
   decoding.jmp_eip = id_dest->val;
 }
 
