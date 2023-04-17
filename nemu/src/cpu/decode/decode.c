@@ -41,20 +41,8 @@ static inline make_DopHelper(SI) {
    */
   int w = op->width;
   rtlreg_t imm = instr_fetch(eip, op->width);
-  Log("0x%08x\t%d", imm, w);
   rtl_sext(&imm, &imm, w);
   op->simm = imm;
-  Log("0x%08x", op->simm);
-  // op->simm = ((op->simm << (8 * (4 - op->width))) >> (8 * (4 - op->width)));
-
-  // if (op->width == 4) {
-  //   op->simm = instr_fetch(eip, op->width);
-  // } else if (op->width == 2) {
-  //   op->simm = (int16_t) ((uint16_t) instr_fetch(eip, op->width));
-  // } else {
-  //   op->simm = (int16_t) (int8_t) ((uint8_t) instr_fetch(eip, op->width));
-  // }
-  // Log("0x%08x", op->simm);
 
   rtl_li(&op->val, op->simm);
 
