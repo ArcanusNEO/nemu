@@ -55,7 +55,7 @@ int fs_open(const char* pathname, int flags, int mode) {
   } while (0)
 
 ssize_t fs_read(int fd, void* buf, size_t len) {
-  assert(fd >= 0);
+  assert(fd >= 0 && fd < NR_FILES);
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
@@ -68,6 +68,8 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     case FD_STDIN :
     case FD_STDOUT :
     case FD_STDERR : return 0;
+    case FD_FB : break;
+    case FD_EVENTS : break;
     default : io_helper(ramdisk_read);
   }
 
@@ -75,7 +77,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
 }
 
 ssize_t fs_write(int fd, const void* buf, size_t len) {
-  assert(fd >= 0);
+  assert(fd >= 0 && fd < NR_FILES);
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
@@ -91,6 +93,8 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
       const char* _buf = buf;
       for (size_t i = 0; i < len; ++i) _putc(_buf[i]);
       return len;
+    case FD_FB : break;
+    case FD_EVENTS : break;
     default : io_helper(ramdisk_write);
   }
 
@@ -98,7 +102,7 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
 }
 
 off_t fs_lseek(int fd, off_t offset, int whence) {
-  assert(fd >= 0);
+  assert(fd >= 0 && fd < NR_FILES);
 
   Finfo* f = file_table + fd;
 
@@ -121,7 +125,7 @@ int fs_close(int fd) {
 }
 
 size_t fs_filesz(int fd) {
-  assert(fd >= 0);
+  assert(fd >= 0 && fd < NR_FILES);
 
   return file_table[fd].size;
 }
