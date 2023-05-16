@@ -103,7 +103,7 @@ off_t fs_lseek(int fd, off_t offset, int whence) {
     default : return -1;
   }
 
-  return 0;
+  return f->open_offset;
 }
 
 int fs_close(int fd) {
@@ -111,5 +111,7 @@ int fs_close(int fd) {
 }
 
 size_t fs_filesz(int fd) {
+  assert(fd >= 0);
+
   return file_table[fd].size;
 }
