@@ -5,8 +5,10 @@
 #include <klib.h>
 #include "debug.h"
 
+#include "neoc.h"
+
 typedef char bool;
-#define true 1
+#define true  1
 #define false 0
 
 #endif
