@@ -51,7 +51,9 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
-  Log("%d\n", eof - f->open_offset);
+
+  Log("%d", f->open_offset - f->disk_offset);
+
   if (fd >= FD_NORMAL &&
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
