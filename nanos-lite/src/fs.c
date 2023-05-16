@@ -55,7 +55,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
 
-  Log("%d\n", len);
+  Log("%d\n", eof - f->open_offset);
   size_t rlen = min(len, (size_t) (eof - f->open_offset));
   ramdisk_read(buf, f->open_offset, rlen);
   f->open_offset += rlen;
