@@ -1,4 +1,5 @@
 #include "cpu/exec.h"
+#include "cpu/intr.h"
 
 void diff_test_skip_qemu();
 void diff_test_skip_nemu();
@@ -29,7 +30,7 @@ make_EHelper(mov_cr2r) {
 }
 
 make_EHelper(int) {
-  TODO();
+  raise_intr(id_dest->val, decoding.seq_eip);
 
   print_asm("int %s", id_dest->str);
 
