@@ -39,7 +39,7 @@ void init_fs() {
 int fs_open(const char* pathname, int flags, int mode) {
   for (size_t i = 0; i < NR_FILES; ++i)
     if (strcmp(pathname, file_table[i].name) == 0) {
-      file_table[i].open_offset = file_table[i].disk_offset + 1;
+      file_table[i].open_offset = file_table[i].disk_offset;
       return i;
     };
   assert(0);  // fs_open 没有找到 pathname 所指示的文件属于异常情况
@@ -97,7 +97,7 @@ off_t fs_lseek(int fd, off_t offset, int whence) {
     case SEEK_END :
       NULL;
       off_t eof = f->disk_offset + f->size;
-      f->open_offset = eof + offset;
+      f->open_offset = eof +1;
       break;
     case SEEK_SET : f->open_offset = offset; break;
     default : return -1;
