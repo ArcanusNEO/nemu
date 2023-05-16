@@ -46,8 +46,16 @@ int fs_open(const char* pathname, int flags, int mode) {
   return -1;
 }
 
+#define io_helper(fn)                                        \
+  do {                                                       \
+    size_t rlen = min(len, (size_t) (eof - f->open_offset)); \
+    fn(buf, f->open_offset, rlen);                           \
+    f->open_offset += rlen;                                  \
+    return rlen;                                             \
+  } while (0)
+
 ssize_t fs_read(int fd, void* buf, size_t len) {
-  assert(fd >= FD_NORMAL);
+  assert(fd >= 0);
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
@@ -56,10 +64,14 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
 
-  size_t rlen = min(len, (size_t) (eof - f->open_offset));
-  ramdisk_read(buf, f->open_offset, rlen);
-  f->open_offset += rlen;
-  return rlen;
+  switch (fd) {
+    case FD_STDIN :
+    case FD_STDOUT :
+    case FD_STDERR : return 0;
+    default : io_helper(ramdisk_read);
+  }
+
+  return -1;
 }
 
 ssize_t fs_write(int fd, const void* buf, size_t len) {
@@ -72,20 +84,17 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
     return 0;
 
   switch (fd) {
+    case FD_STDIN : return 0;
     case FD_STDOUT :
     case FD_STDERR :
       NULL;
       const char* _buf = buf;
       for (size_t i = 0; i < len; ++i) _putc(_buf[i]);
       return len;
-    default :
-      NULL;
-      size_t rlen = min(len, (size_t) (eof - f->open_offset));
-      ramdisk_write(buf, f->open_offset, rlen);
-      f->open_offset += rlen;
-      return rlen;
+    default : io_helper(ramdisk_write);
   }
-  return 0;
+
+  return -1;
 }
 
 off_t fs_lseek(int fd, off_t offset, int whence) {
