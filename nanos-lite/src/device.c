@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include "device.h"
+
 #define NAME(key) \
   [_KEY_##key] = #key,
 

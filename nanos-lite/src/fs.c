@@ -1,5 +1,6 @@
 #include "fs.h"
 
+#include "device.h"
 #include "ramdisk.h"
 
 typedef struct {
@@ -21,11 +22,11 @@ enum {
 
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
-  {  "stdin (note that this is not the actual stdin)",   1, 0, 0},
-  {"stdout (note that this is not the actual stdout)",   1, 0, 0},
-  {"stderr (note that this is not the actual stderr)",   1, 0, 0},
-  [FD_FB] = {                                         "/dev/fb",   1, 0, 0},
-  [FD_EVENTS] = {                                     "/dev/events",   1, 0, 0},
+  {  "stdin (note that this is not the actual stdin)",   0, 0, 0},
+  {"stdout (note that this is not the actual stdout)",   0, 0, 0},
+  {"stderr (note that this is not the actual stderr)",   0, 0, 0},
+  [FD_FB] = {                                         "/dev/fb",   0, 0, 0},
+  [FD_EVENTS] = {                                     "/dev/events",   0, 0, 0},
   [FD_DISPINFO] = {                                  "/proc/dispinfo", 128, 0, 0},
 #include "files.h"
 };
@@ -60,7 +61,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
 
-  if (fd >= FD_NORMAL &&
+  if (fd >= FD_DISPINFO &&
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
 
@@ -68,7 +69,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     case FD_STDIN :
     case FD_STDOUT :
     case FD_STDERR : return 0;
-    case FD_FB : break;
+    case FD_FB : io_helper(dispinfo_read);
     case FD_EVENTS : break;
     default : io_helper(ramdisk_read);
   }
@@ -81,7 +82,7 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
-  if (fd >= FD_NORMAL &&
+  if (fd >= FD_DISPINFO &&
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
 
@@ -93,7 +94,7 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
       const char* _buf = buf;
       for (size_t i = 0; i < len; ++i) _putc(_buf[i]);
       return len;
-    case FD_FB : break;
+    case FD_FB : io_helper(fb_write);
     case FD_EVENTS : break;
     default : io_helper(ramdisk_write);
   }
