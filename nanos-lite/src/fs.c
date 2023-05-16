@@ -4,6 +4,7 @@ typedef struct {
   char* name;
   size_t size;
   off_t disk_offset;
+  off_t open_offset;
 } Finfo;
 
 enum {
@@ -33,14 +34,40 @@ void init_fs() {
   // TODO: initialize the size of /dev/fb
 }
 
-ssize_t fs_write(uintptr_t fd, uint8_t* buf, size_t len) {
+int fs_open(const char* pathname, int flags, int mode) {
+  TODO();
+  return 0;
+}
+
+ssize_t fs_read(int fd, void* buf, size_t len) {
+  TODO();
+  return 0;
+}
+
+ssize_t fs_write(int fd, const void* buf, size_t len) {
   Finfo* fp = file_table + fd;
+  const char* _buf = buf;
 
   switch (fd) {
     case FD_STDOUT :
     case FD_STDERR :
-      for (size_t i = 0; i < len; ++i) _putc(buf[i]);
+      for (size_t i = 0; i < len; ++i) _putc(_buf[i]);
       return len;
   }
+  return 0;
+}
+
+off_t fs_lseek(int fd, off_t offset, int whence) {
+  TODO();
+  return 0;
+}
+
+int fs_close(int fd) {
+  TODO();
+  return 0;
+}
+
+size_t fs_filesz(int fd) {
+  TODO();
   return 0;
 }
