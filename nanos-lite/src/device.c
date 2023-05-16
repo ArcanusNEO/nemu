@@ -20,7 +20,7 @@ void dispinfo_read(void* buf, off_t offset, size_t len) {
 ssize_t _copy_pixel(const uint32_t* pixels, off_t offset, size_t len);
 
 void fb_write(const void* buf, off_t offset, size_t len) {
-  return _copy_pixel(buf, offset, len);
+  _copy_pixel(buf, offset, len);
 }
 
 void init_device() {
