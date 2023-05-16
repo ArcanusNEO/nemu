@@ -103,7 +103,7 @@ off_t fs_lseek(int fd, off_t offset, int whence) {
     default : return -1;
   }
 
-  return f->open_offset;
+  return f->open_offset - f->disk_offset;
 }
 
 int fs_close(int fd) {
