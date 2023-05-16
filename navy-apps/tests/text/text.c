@@ -5,6 +5,8 @@ int main() {
   FILE *fp = fopen("/share/texts/num", "r+");
   assert(fp);
 
+  printf("%d\n", fp);
+
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
   assert(size == 5000);
