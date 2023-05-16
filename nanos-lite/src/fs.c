@@ -102,7 +102,7 @@ off_t fs_lseek(int fd, off_t offset, int whence) {
       off_t eof = f->disk_offset + f->size;
       f->open_offset = eof + offset;
       break;
-    case SEEK_SET : f->open_offset = offset; break;
+    case SEEK_SET : f->open_offset = f->disk_offset + offset; break;
     default : return -1;
   }
 
