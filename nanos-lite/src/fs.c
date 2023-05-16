@@ -47,12 +47,10 @@ int fs_open(const char* pathname, int flags, int mode) {
 }
 
 ssize_t fs_read(int fd, void* buf, size_t len) {
-  assert(fd >= 0);
+  assert(fd >= FD_NORMAL);
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
-
-  Log("%d", f->open_offset - f->disk_offset);
 
   if (fd >= FD_NORMAL &&
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
