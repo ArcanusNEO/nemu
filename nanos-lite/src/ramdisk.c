@@ -11,13 +11,13 @@ extern uint8_t ramdisk_end;
  * a physical one, which is necessary for a microkernel.
  */
 
-/* read `len' bytes starting from `offset' of ramdisk into `buf' */
+/* read 'len' bytes starting from 'offset' of ramdisk into 'buf' */
 void ramdisk_read(void *buf, off_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
   memcpy(buf, &ramdisk_start + offset, len);
 }
 
-/* write `len' bytes starting from `buf' into the `offset' of ramdisk */
+/* write 'len' bytes starting from 'buf' into the 'offset' of ramdisk */
 void ramdisk_write(const void *buf, off_t offset, size_t len) {
   assert(offset + len <= RAMDISK_SIZE);
   memcpy(&ramdisk_start + offset, buf, len);
