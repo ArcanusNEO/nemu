@@ -21,10 +21,14 @@ ssize_t _read_pixel(uint32_t* pixels, off_t offset, size_t len);
 ssize_t _write_pixel(const uint32_t* pixels, off_t offset, size_t len);
 
 void fb_read(void* buf, off_t offset, size_t len) {
+  Log("%d", offset);
+  Log("%d", len);
   _read_pixel(buf, offset, len);
 }
 
 void fb_write(const void* buf, off_t offset, size_t len) {
+  Log("%d", offset);
+  Log("%d", len);
   _write_pixel(buf, offset, len);
 }
 
