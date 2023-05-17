@@ -75,6 +75,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     case FD_FB : return io_helper(fb_read);
     case FD_EVENTS : break;
     case FD_DISPINFO :;
+      Log("%d", f->open_offset);
       // f->open_offset = f->disk_offset;
       // len = f->size;
       ssize_t ret = io_helper(dispinfo_read);
