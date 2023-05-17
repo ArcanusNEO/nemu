@@ -15,8 +15,8 @@ size_t events_read(void* buf, size_t len) {
     nr = snprintf(
       buf, len, "k%c %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]);
   else nr = snprintf(buf, len, "t %u\n", _uptime());
-  Log("%d", nr);
-  nr = max(nr - 1, 0);
+  nr -= !!(nr < len);
+  nr = max(nr, 0);
   return nr;
 }
 
