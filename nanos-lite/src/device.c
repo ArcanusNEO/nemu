@@ -11,6 +11,7 @@ size_t events_read(void* buf, size_t len) {
   int key = _read_key();
   if (key != _KEY_NONE) {
     Log("%d", key);
+    Log("%d", !!(key & 0x8000));
     return snprintf(
       buf, len, "k%s %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]);
   }
