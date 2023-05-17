@@ -8,6 +8,7 @@ static const char* keyname[256]
   __attribute__((used)) = {[_KEY_NONE] = "NONE", _KEYS(NAME)};
 
 size_t events_read(void* buf, size_t len) {
+  Log("%d", len);
   char* _buf = buf;
   int nr;
   int key = _read_key();
