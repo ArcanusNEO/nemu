@@ -50,12 +50,12 @@ int fs_open(const char* pathname, int flags, int mode) {
 }
 
 #define io_helper(fn)                                        \
-  do {                                                       \
+  ({                                                         \
     size_t rlen = min(len, (size_t) (eof - f->open_offset)); \
     fn(buf, f->open_offset, rlen);                           \
     f->open_offset += rlen;                                  \
-    return rlen;                                             \
-  } while (0)
+    rlen;                                                    \
+  })
 
 ssize_t fs_read(int fd, void* buf, size_t len) {
   assert(fd >= 0 && fd < NR_FILES);
@@ -71,9 +71,9 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     case FD_STDIN :
     case FD_STDOUT :
     case FD_STDERR : return 0;
-    case FD_FB : io_helper(dispinfo_read);
+    case FD_FB : return io_helper(dispinfo_read);
     case FD_EVENTS : break;
-    default : io_helper(ramdisk_read);
+    default : return io_helper(ramdisk_read);
   }
 
   return -1;
@@ -96,9 +96,9 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
       const char* _buf = buf;
       for (size_t i = 0; i < len; ++i) _putc(_buf[i]);
       return len;
-    case FD_FB : io_helper(fb_write);
+    case FD_FB : return io_helper(fb_write);
     case FD_EVENTS : break;
-    default : io_helper(ramdisk_write);
+    default : return io_helper(ramdisk_write);
   }
 
   return -1;

@@ -24,12 +24,20 @@ _Screen _screen = {
 
 extern void* memcpy(void*, const void*, int);
 
-ssize_t _copy_pixel(const uint32_t* pixels, off_t offset, size_t len) {
-  ssize_t scrsz = _screen.width * _screen.height * 4;
-  ssize_t rlen = min(len, scrsz - offset, scrsz);
-  rlen = max(rlen, 0);
-  if (rlen > 0) memcpy((uint8_t*) fb + offset, pixels, rlen);
-  return rlen;
+#define scrcpy(dst, src)                                          \
+  ({                                                              \
+    ssize_t scrsz = (ssize_t) _screen.width * _screen.height * 4; \
+    size_t rlen = max(0, min(len, scrsz - offset, scrsz));        \
+    if (rlen != 0) memcpy(dst, src, rlen);                        \
+    rlen;                                                         \
+  })
+
+ssize_t _read_pixel(uint32_t* pixels, off_t offset, size_t len) {
+  return scrcpy(pixels, (void*) fb + offset);
+}
+
+ssize_t _write_pixel(const uint32_t* pixels, off_t offset, size_t len) {
+  return scrcpy((void*) fb + offset, pixels);
 }
 
 void _draw_rect(const uint32_t* pixels, int x, int y, int w, int h) {
