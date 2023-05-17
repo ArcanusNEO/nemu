@@ -3,7 +3,13 @@
 
 #include "common.h"
 
-enum {SEEK_SET, SEEK_CUR, SEEK_END};
+// enum {SEEK_SET, SEEK_CUR, SEEK_END};
+#undef SEEK_SET
+#undef SEEK_CUR
+#undef SEEK_END
+#define SEEK_SET 0
+#define SEEK_CUR 1
+#define SEEK_END 3
 
 int fs_open(const char* pathname, int flags, int mode);
 ssize_t fs_read(int fd, void* buf, size_t len);
