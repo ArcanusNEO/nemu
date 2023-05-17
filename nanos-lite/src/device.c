@@ -15,8 +15,8 @@ size_t events_read(void* buf, size_t len) {
     nr = snprintf(
       buf, len, "k%c %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]);
   else nr = snprintf(buf, len, "t %u\n", _uptime());
-  nr -= !!(nr < len);
-  nr = max(nr, 0);
+  nr = max(nr, 1);
+  nr -= !!(_buf[nr - 1] == '\0');
   return nr;
 }
 
@@ -25,7 +25,6 @@ static char dispinfo[128] __attribute__((used));
 void dispinfo_read(void* buf, off_t offset, size_t len) {
   memset(buf, 0, len);
   strncpy(buf, dispinfo + offset, len);
-  
 }
 
 ssize_t _read_pixel(uint32_t* pixels, off_t offset, size_t len);
