@@ -53,6 +53,7 @@ int fs_open(const char* pathname, int flags, int mode) {
 #define io_helper(fn)                                                \
   ({                                                                 \
     size_t rlen = max(0, min(f->size, len, (eof - f->open_offset))); \
+    Log("%d", f->size);                                              \
     fn(buf, f->open_offset, rlen);                                   \
     f->open_offset += rlen;                                          \
     rlen;                                                            \
