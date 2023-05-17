@@ -8,7 +8,6 @@ static const char* keyname[256]
   __attribute__((used)) = {[_KEY_NONE] = "NONE", _KEYS(NAME)};
 
 size_t events_read(void* buf, size_t len) {
-  Log("%d", len);
   char* _buf = buf;
   int nr;
   int key = _read_key();
@@ -16,7 +15,7 @@ size_t events_read(void* buf, size_t len) {
     nr = snprintf(
       buf, len, "k%c %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]);
   else nr = snprintf(buf, len, "t %u\n", _uptime());
-  // nr -= !!(_buf[nr] == '\0');
+  nr -= !!(nr == len);
   nr = max(nr, 0);
   return nr;
 }
