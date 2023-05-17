@@ -78,7 +78,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
       f->open_offset = 0;
       len = f->size;
       ssize_t ret = io_helper(dispinfo_read);
-      f->open_offset = 0;
+      // f->open_offset = 0;
       return ret;
     default : return io_helper(ramdisk_read);
   }
