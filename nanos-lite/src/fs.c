@@ -50,12 +50,12 @@ int fs_open(const char* pathname, int flags, int mode) {
   return -1;
 }
 
-#define io_helper(fn)                                       \
-  ({                                                        \
-    size_t rlen = max(0, min(len, (eof - f->open_offset))); \
-    fn(buf, f->open_offset, rlen);                          \
-    f->open_offset += rlen;                                 \
-    rlen;                                                   \
+#define io_helper(fn)                                                \
+  ({                                                                 \
+    size_t rlen = max(0, min(f->size, len, (eof - f->open_offset))); \
+    fn(buf, f->open_offset, rlen);                                   \
+    f->open_offset += rlen;                                          \
+    rlen;                                                            \
   })
 
 ssize_t fs_read(int fd, void* buf, size_t len) {
@@ -63,10 +63,6 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
-
-  if (fd >= FD_DISPINFO &&
-    (f->open_offset >= eof || f->open_offset < f->disk_offset))
-    return 0;
 
   switch (fd) {
     case FD_STDIN :
@@ -86,9 +82,6 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
-  if (fd >= FD_DISPINFO &&
-    (f->open_offset >= eof || f->open_offset < f->disk_offset))
-    return 0;
 
   switch (fd) {
     case FD_STDIN : return 0;
