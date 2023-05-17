@@ -25,6 +25,7 @@ static char dispinfo[128] __attribute__((used));
 void dispinfo_read(void* buf, off_t offset, size_t len) {
   memset(buf, 0, len);
   strncpy(buf, dispinfo + offset, len);
+  ((char*) buf)[len - 1] = '\0';
 }
 
 ssize_t _read_pixel(uint32_t* pixels, off_t offset, size_t len);
