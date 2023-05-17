@@ -46,8 +46,8 @@ int fs_open(const char* pathname, int flags, int mode) {
       file_table[i].open_offset = file_table[i].disk_offset;
       return i;
     };
-  Log("%s", pathname);
-  assert(0);  // fs_open 没有找到 pathname 所指示的文件属于异常情况
+  Log("%s not found", pathname);
+  // assert(0);
   return -1;
 }
 
