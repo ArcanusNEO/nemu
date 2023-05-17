@@ -8,14 +8,11 @@ static const char* keyname[256]
   __attribute__((used)) = {[_KEY_NONE] = "NONE", _KEYS(NAME)};
 
 size_t events_read(void* buf, size_t len) {
-  // int key = _read_key();
-  // if (key == _KEY_NONE) {
-  //   unsigned long uptime = _uptime;
-  //   snprintf(buf, len, "t %lu\n", uptime);
-  // } else {
-  //   strcpy(buf, keyname[key]);
-  // }
-  return 0;
+  int key = _read_key();
+  if (key != _KEY_NONE)
+    return snprintf(
+      buf, len, "k%s %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]);
+  return snprintf(buf, len, "t %lu\n", _uptime());
 }
 
 static char dispinfo[128] __attribute__((used));

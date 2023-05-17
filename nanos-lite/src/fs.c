@@ -69,7 +69,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
     case FD_STDOUT :
     case FD_STDERR : return 0;
     case FD_FB : return io_helper(fb_read);
-    case FD_EVENTS : break;
+    case FD_EVENTS : return events_read(buf, len);
     case FD_DISPINFO : return io_helper(dispinfo_read);
     default : return io_helper(ramdisk_read);
   }
