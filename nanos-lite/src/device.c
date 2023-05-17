@@ -13,9 +13,9 @@ size_t events_read(void* buf, size_t len) {
     Log("%d", key);
     Log("%d", !!(key & 0x8000));
     return snprintf(
-      buf, len, "k%s %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]);
+      buf, len, "k%s %s\n", "ud"[!!(key & 0x8000)], keyname[key & ~0x8000]) - 1;
   }
-  return snprintf(buf, len, "t %u\n", _uptime());
+  return snprintf(buf, len, "t %u\n", _uptime()) - 1;
 }
 
 static char dispinfo[128] __attribute__((used));
