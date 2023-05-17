@@ -125,6 +125,5 @@ int fs_close(int fd) {
 
 size_t fs_filesz(int fd) {
   assert(fd >= 0 && fd < NR_FILES);
-
   return file_table[fd].size;
 }
