@@ -50,6 +50,5 @@ void _draw_sync() { }
 
 int _read_key() {
   if (inb(KEY_STATUS)) return inl(KEY_REG);
-
   return _KEY_NONE;
 }
