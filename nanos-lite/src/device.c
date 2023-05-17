@@ -23,8 +23,8 @@ size_t events_read(void* buf, size_t len) {
 static char dispinfo[128] __attribute__((used));
 
 void dispinfo_read(void* buf, off_t offset, size_t len) {
-  memset(buf, 0, len);
-  strncpy(buf, dispinfo + offset, len);
+  len = max(0, min(len, lengthof(dispinfo), lengthof(dispinfo) - offset));
+  strncpy(buf, dispinfo + max(0, offset), len);
   ((char*) buf)[len - 1] = '\0';
 }
 
