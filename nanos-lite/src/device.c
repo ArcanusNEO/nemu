@@ -14,7 +14,7 @@ size_t events_read(void* buf, size_t len) {
 static char dispinfo[128] __attribute__((used));
 
 void dispinfo_read(void* buf, off_t offset, size_t len) {
-  strcpy(buf, dispinfo + offset);
+  strncpy(buf, dispinfo + offset, len);
 }
 
 ssize_t _read_pixel(uint32_t* pixels, off_t offset, size_t len);
