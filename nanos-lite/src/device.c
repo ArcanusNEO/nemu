@@ -35,12 +35,7 @@ void fb_read(void* buf, off_t offset, size_t len) {
 }
 
 void fb_write(const void* buf, off_t offset, size_t len) {
-  // _write_pixel(buf, offset, len);
-  int row, col;
-  offset /= 4;
-  col = offset % _screen.width;
-  row = offset / _screen.width;
-  _draw_rect(buf, col, row, len / 4, 1);
+  _write_pixel(buf, offset, len);
 }
 
 void init_device() {
