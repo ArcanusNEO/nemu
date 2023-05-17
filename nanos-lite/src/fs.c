@@ -64,7 +64,7 @@ ssize_t fs_read(int fd, void* buf, size_t len) {
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
 
-  if (fd >= FD_NORMAL &&
+  if (fd >= FD_DISPINFO &&
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
 
@@ -86,7 +86,7 @@ ssize_t fs_write(int fd, const void* buf, size_t len) {
 
   Finfo* f = file_table + fd;
   off_t eof = f->disk_offset + f->size;
-  if (fd >= FD_NORMAL &&
+  if (fd >= FD_DISPINFO &&
     (f->open_offset >= eof || f->open_offset < f->disk_offset))
     return 0;
 
