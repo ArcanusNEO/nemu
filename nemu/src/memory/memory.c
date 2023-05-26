@@ -2,6 +2,10 @@
 
 #include "device/mmio.h"
 
+// Control Register flags
+#define CR0_PE 0x00000001  // Protection Enable
+#define CR0_PG 0x80000000  // Paging
+
 #define pmem_rw(addr, type)                                                \
   *(type*) ({                                                              \
     Assert(                                                                \
@@ -29,10 +33,20 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
 
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  return paddr_read(addr, len);
+  if (!(cpu.cr0 & CR0_PG)) return paddr_read(addr, len);
+  if (0) {
+    assert(0);
+    }
+  paddr_t paddr = page_translate(addr);
+  return paddr_read(paddr, len);
 }
 
 // len: byte
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  paddr_write(addr, len, data);
+  if (!(cpu.cr0 & CR0_PG)) paddr_write(addr, len, data);
+  if (0) {
+    assert(0);
+  }
+  paddr_t paddr = page_translate(addr);
+  paddr_write(paddr, len, data);
 }
