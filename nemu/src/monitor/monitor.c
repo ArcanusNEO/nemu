@@ -87,7 +87,7 @@ static inline void restart() {
 
   cpu.cs = 0x0008;
 
-  cpu.cr0 = 0x60000011;
+  cpu.cr0.val = 0x60000011;
 
 #ifdef DIFF_TEST
   init_qemu_reg();

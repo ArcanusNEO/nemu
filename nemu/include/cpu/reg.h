@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include "memory/mmu.h"
+
 extern const char* regsl[];
 extern const char* regsw[];
 extern const char* regsb[];
@@ -90,9 +92,8 @@ typedef struct {
 
   uint16_t cs;
 
-  uint32_t cr0;
-  uint32_t cr3;
-  bool INTR;
+  CR0 cr0;
+  CR3 cr3;
 } CPU_state;
 
 extern CPU_state cpu;

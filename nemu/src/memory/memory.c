@@ -2,9 +2,7 @@
 
 #include "device/mmio.h"
 
-// Control Register flags
-#define CR0_PE 0x00000001  // Protection Enable
-#define CR0_PG 0x80000000  // Paging
+#include "memory/mmu.h"
 
 #define pmem_rw(addr, type)                                                \
   *(type*) ({                                                              \
@@ -31,22 +29,46 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
   memcpy(guest_to_host(addr), &data, len);
 }
 
+paddr_t page_translate(vaddr_t vaddr, bool is_write) {
+  paddr_t paddr = vaddr;
+
+  if (cpu.cr0.protect_enable && cpu.cr0.paging) {
+    PDE* pgdir = (PDE*) (intptr_t) (cpu.cr3.page_directory_base << 12);
+    PDE pde = {.val = paddr_read((intptr_t) &pgdir[(vaddr >> 22) & 0x3ff], 4)};
+    assert(pde.present);
+    pde.accessed = 1;
+
+    PTE* pgtab = (PTE*) (intptr_t) (pde.page_frame << 12);
+    PTE pte = {.val = paddr_read((intptr_t) &pgtab[(vaddr >> 12) & 0x3ff], 4)};
+    assert(pte.present);
+    pte.accessed = 1;
+    if (is_write) pte.dirty = 1;
+
+    paddr = (pte.page_frame << 12) | (vaddr & PAGE_MASK);
+  }
+
+  return paddr;
+}
+
+#define cross_page(addr, len) \
+  (len > 0 && (((addr) + (len) - (1)) & ~PAGE_MASK) != ((addr) & ~PAGE_MASK))
+
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  if (!(cpu.cr0 & CR0_PG)) return paddr_read(addr, len);
-  if (0) {
+  if (cross_page(addr, len)) {
+    // TODO
     assert(0);
-    }
-  paddr_t paddr = page_translate(addr);
+  }
+  paddr_t paddr = page_translate(addr, false);
   return paddr_read(paddr, len);
 }
 
 // len: byte
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  if (!(cpu.cr0 & CR0_PG)) paddr_write(addr, len, data);
-  if (0) {
+  if (cross_page(addr, len)) {
+    // TODO
     assert(0);
   }
-  paddr_t paddr = page_translate(addr);
+  paddr_t paddr = page_translate(addr, true);
   paddr_write(paddr, len, data);
 }
