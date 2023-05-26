@@ -55,24 +55,24 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  // if (cross_page(addr, len)) {
-  //   // TODO
-  //   Log("addr: 0x%08x", addr);
-  //   Log("len: %d", len);
-  //   assert(0);
-  // }
+  if (cross_page(addr, len)) {
+    // TODO
+    Log("addr: 0x%08x", addr);
+    Log("len: %d", len);
+    assert(0);
+  }
   paddr_t paddr = page_translate(addr, false);
   return paddr_read(paddr, len);
 }
 
 // len: byte
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  // if (cross_page(addr, len)) {
-  //   // TODO
-  //   Log("addr: 0x%08x", addr);
-  //   Log("len: %d", len);
-  //   assert(0);
-  // }
+  if (cross_page(addr, len)) {
+    // TODO
+    Log("addr: 0x%08x", addr);
+    Log("len: %d", len);
+    assert(0);
+  }
   paddr_t paddr = page_translate(addr, true);
   paddr_write(paddr, len, data);
 }
