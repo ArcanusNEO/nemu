@@ -57,7 +57,8 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 uint32_t vaddr_read(vaddr_t addr, int len) {
   if (cross_page(addr, len)) {
     // TODO
-    Log("addr: 0x%08x\nlen: %d", addr, len);
+    Log("addr: 0x%08x", addr);
+    Log("len: %d", len);
     assert(0);
   }
   paddr_t paddr = page_translate(addr, false);
@@ -68,7 +69,8 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
   if (cross_page(addr, len)) {
     // TODO
-    Log("addr: 0x%08x\nlen: %d", addr, len);
+    Log("addr: 0x%08x", addr);
+    Log("len: %d", len);
     assert(0);
   }
   paddr_t paddr = page_translate(addr, true);
