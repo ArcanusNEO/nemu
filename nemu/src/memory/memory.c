@@ -51,15 +51,18 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 }
 
 #define cross_page(addr, len) \
-  (len > 0 && (((addr) + (len) - (1)) & ~PAGE_MASK) != ((addr) & ~PAGE_MASK))
+  ((len) > 0 && ((addr) & (PAGE_MASK)) + (len) > PAGE_SIZE)
 
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
-    // TODO
-    Log("addr: 0x%08x", addr);
-    Log("len: %d", len);
-    assert(0);
+  if (cross_page(addr, len)) {
+    uint32_t offset = addr & PAGE_MASK;
+    int cur = PAGE_SIZE - offset;
+    int res = len - cur;
+    uint32_t curbyte = paddr_read(page_translate(addr, false), cur);
+    uint32_t resbyte = paddr_read(page_translate(addr + cur, false), res);
+    uint32_t ret = (resbyte << (cur * 8)) + curbyte;
+    return ret;
   }
   paddr_t paddr = page_translate(addr, false);
   return paddr_read(paddr, len);
@@ -67,11 +70,14 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 
 // len: byte
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
-    // TODO
-    Log("addr: 0x%08x", addr);
-    Log("len: %d", len);
-    assert(0);
+  if (cross_page(addr, len)) {
+    uint32_t offset = addr & PAGE_MASK;
+    int cur = PAGE_SIZE - offset;
+    int res = len - cur;
+    paddr_write(page_translate(addr, true), cur, data);
+    data >>= cur * 8;
+    paddr_write(page_translate(addr + cur, false), res, data);
+    return;
   }
   paddr_t paddr = page_translate(addr, true);
   paddr_write(paddr, len, data);
