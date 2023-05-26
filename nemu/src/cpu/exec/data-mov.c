@@ -6,11 +6,29 @@ make_EHelper(mov) {
 }
 
 make_EHelper(movfromc) {
-  TODO();
+  sprintf(id_dest->str, "%s", id_src->str);
+  switch (id_dest->reg) {
+    case 0 :
+      rtl_sr(id_src->reg, id_src->width, &cpu.cr0);
+      sprintf(id_src->str, "cr0");
+      break;
+    case 3 :
+      rtl_sr(id_src->reg, id_src->width, &cpu.cr3);
+      sprintf(id_src->str, "cr3");
+      break;
+    default : panic("Unexpected control register at 0x%08X\n", cpu.eip);
+  }
+  print_asm_template2(mov);
 }
 
 make_EHelper(movtoc) {
-  TODO();
+  sprintf(id_dest->str, "cr%d", id_dest->reg);
+  switch (id_dest->reg) {
+    case 0 : cpu.cr0 = id_src->val; break;
+    case 3 : cpu.cr3 = id_src->val; break;
+    default : panic("Unexpected control register at 0x%08X\n", cpu.eip);
+  }
+  print_asm_template2(mov);
 }
 
 make_EHelper(push) {
