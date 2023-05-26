@@ -55,7 +55,7 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  if (addr & PAGE_MASK + len > PAGE_SIZE) {
+  if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
     // TODO
     Log("addr: 0x%08x", addr);
     Log("len: %d", len);
@@ -67,7 +67,7 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 
 // len: byte
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  if (addr & PAGE_MASK + len > PAGE_SIZE) {
+  if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
     // TODO
     Log("addr: 0x%08x", addr);
     Log("len: %d", len);
