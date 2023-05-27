@@ -5,6 +5,7 @@ static _RegSet* (*H)(_Event, _RegSet*) = NULL;
 
 void vecsys();
 void vecnull();
+void veckern();
 
 _RegSet* irq_handle(_RegSet* tf) {
   _RegSet* next = tf;
@@ -35,6 +36,8 @@ void _asye_init(_RegSet* (*h)(_Event, _RegSet*) ) {
 
   // -------------------- system call --------------------------
   idt[0x80] = GATE(STS_TG32, KSEL(SEG_KCODE), vecsys, DPL_USER);
+  // -------------------- kernel trap --------------------------
+  idt[0x81] = GATE(STS_TG32, KSEL(SEG_KCODE), veckern, DPL_KERN);
 
   set_idt(idt, sizeof(idt));
 
