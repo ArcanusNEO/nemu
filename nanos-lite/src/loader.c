@@ -13,7 +13,7 @@ uintptr_t loader(_Protect* as, const char* filename) {
   int fd = fs_open(filename, 0, 0);
   size_t f_size = fs_filesz(fd);
 
-  // Log("loaded: [%d]%s size: %d", fd, filename, f_size);
+  Log("loaded: [%d]%s size: %d", fd, filename, f_size);
 
   void* mend = DEFAULT_ENTRY + f_size;
   for (void* va = DEFAULT_ENTRY; va < mend; va += PGSIZE) {
