@@ -19,7 +19,7 @@ int mm_brk(uint32_t new_brk) {
   if (current->cur_brk == 0) current->max_brk = new_brk;
   else if (new_brk > current->max_brk) {
     uintptr_t va;
-    for (va = (current->max_brk + PGMASK) & ~((uintptr_t) PGMASK); va < new_brk;
+    for (va = (current->max_brk + PGMASK) & ~PGMASK; va < new_brk;
          va += PGSIZE) {
       void* pa = new_page();
       _map(&current->as, (void*) va, pa);
