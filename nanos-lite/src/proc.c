@@ -24,6 +24,7 @@ void load_prog(const char* filename) {
   stack.end = stack.start + sizeof(pcb[i].stack);
 
   pcb[i].tf = _umake(&pcb[i].as, stack, stack, (void*) entry, NULL, NULL);
+  Log("%d", pcb[i].tf->irq);
 }
 
 _RegSet* schedule(_RegSet* prev) {
