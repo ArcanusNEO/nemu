@@ -35,11 +35,17 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
   if (cpu.cr0.protect_enable && cpu.cr0.paging) {
     PDE* pgdir = (PDE*) (intptr_t) (cpu.cr3.page_directory_base << 12);
     PDE pde = {.val = paddr_read((intptr_t) &pgdir[PDX(vaddr)], 4)};
+    if (!pde.present) {
+      Log("Invalid vaddr accessed: 0x%08x", vaddr);
+    }
     assert(pde.present);
     pde.accessed = 1;
 
     PTE* pgtab = (PTE*) (intptr_t) (pde.page_frame << 12);
     PTE pte = {.val = paddr_read((intptr_t) &pgtab[PTX(vaddr)], 4)};
+    if (!pte.present) {
+      Log("Invalid vaddr accessed: 0x%08x", vaddr);
+    }
     assert(pte.present);
     pte.accessed = 1;
     if (is_write) pte.dirty = 1;
@@ -55,7 +61,6 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  Log("Access vaddr: 0x%08x", addr);
   if (cross_page(addr, len)) {
     uint32_t offset = addr & PAGE_MASK;
     int cur = PAGE_SIZE - offset;
