@@ -5,6 +5,8 @@
 
 #include "memory.h"
 
+#include "am.h"
+
 #define DEFAULT_ENTRY ((void*) 0x8048000)
 
 uintptr_t loader(_Protect* as, const char* filename) {
