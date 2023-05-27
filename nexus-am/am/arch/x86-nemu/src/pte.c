@@ -82,15 +82,26 @@ void _unmap(_Protect* p, void* va) { }
 
 _RegSet* _umake(_Protect* p, _Area ustack, _Area kstack, void* entry,
   char* const argv[], char* const envp[]) {
-  uint32_t* s = ustack.end;
-  s[-1] = 0;                 // envp
-  s[-2] = 0;                 // argv
-  s[-3] = 0;                 // argc
-  s[-4] = 0;                 // retaddr
-  s[-5] = 0x00000202;        // eflags
-  s[-6] = 8;                 // cs
-  s[-7] = (uint32_t) entry;  // eip
-  s[-8] = 0;                 // error_code
-  s[-9] = 0x81;              // irq
+  // uint32_t* s = ustack.end;
+  // s[-1] = 0;                 // envp
+  // s[-2] = 0;                 // argv
+  // s[-3] = 0;                 // argc
+  // s[-4] = 0;                 // retaddr
+  // s[-5] = 0x00000202;        // eflags
+  // s[-6] = 8;                 // cs
+  // s[-7] = (uint32_t) entry;  // eip
+  // s[-8] = 0;                 // error_code
+  // s[-9] = 0x81;              // irq
+  // return (_RegSet*) (ustack.end - 68);
+  *(uint32_t*) (ustack.end - 4) = 0;                  // envp
+  *(uint32_t*) (ustack.end - 8) = 0;                  // argv
+  *(uint32_t*) (ustack.end - 12) = 0;                 // argc
+  *(uint32_t*) (ustack.end - 16) = 0;                 // retaddr
+  *(uint32_t*) (ustack.end - 20) = 0x00000202;        // eflags
+  *(uint32_t*) (ustack.end - 24) = 8;                 // cs
+  *(uint32_t*) (ustack.end - 28) = (uint32_t) entry;  // eip
+  *(uint32_t*) (ustack.end - 32) = 0;                 // error_code
+  *(uint32_t*) (ustack.end - 36) = 0x81;              // irq
+  //// gpr don't care
   return (_RegSet*) (ustack.end - 68);
 }
