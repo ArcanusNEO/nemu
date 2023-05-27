@@ -55,6 +55,7 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 
 // len: byte
 uint32_t vaddr_read(vaddr_t addr, int len) {
+  Log("Access vaddr: 0x%08x", addr);
   if (cross_page(addr, len)) {
     uint32_t offset = addr & PAGE_MASK;
     int cur = PAGE_SIZE - offset;
