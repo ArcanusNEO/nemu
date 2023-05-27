@@ -34,13 +34,13 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 
   if (cpu.cr0.protect_enable && cpu.cr0.paging) {
     PDE* pgdir = (PDE*) (intptr_t) (cpu.cr3.page_directory_base << 12);
-    PDE pde = {.val = paddr_read((intptr_t) &pgdir[(vaddr >> 22) & 0x3ff], 4)};
-    // assert(pde.present);
+    PDE pde = {.val = paddr_read((intptr_t) &pgdir[PDX(vaddr)], 4)};
+    assert(pde.present);
     pde.accessed = 1;
 
     PTE* pgtab = (PTE*) (intptr_t) (pde.page_frame << 12);
-    PTE pte = {.val = paddr_read((intptr_t) &pgtab[(vaddr >> 12) & 0x3ff], 4)};
-    // assert(pte.present);
+    PTE pte = {.val = paddr_read((intptr_t) &pgtab[PTX(vaddr)], 4)};
+    assert(pte.present);
     pte.accessed = 1;
     if (is_write) pte.dirty = 1;
 
