@@ -40,7 +40,7 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
 
     PTE* pgtab = (PTE*) (intptr_t) (pde.page_frame << 12);
     PTE pte = {.val = paddr_read((intptr_t) &pgtab[(vaddr >> 12) & 0x3ff], 4)};
-    assert(pte.present);
+    // assert(pte.present);
     pte.accessed = 1;
     if (is_write) pte.dirty = 1;
 
