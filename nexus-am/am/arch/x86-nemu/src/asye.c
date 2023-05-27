@@ -13,7 +13,7 @@ _RegSet* irq_handle(_RegSet* tf) {
     switch (tf->irq) {
       case 0x80 : ev.event = _EVENT_SYSCALL; break;
       case 0x81 : ev.event = _EVENT_TRAP; break;
-      default : ev.event = _EVENT_ERROR; break;
+      default : ev.event = tf->irq; break;
     }
 
     next = H(ev, tf);
@@ -46,7 +46,7 @@ _RegSet* _make(_Area stack, void* entry, void* arg) {
   return NULL;
 }
 
-void _trap() {
+void _trap(void) {
   asm volatile("int $0x81");
 }
 

@@ -87,6 +87,7 @@ _RegSet* _umake(_Protect* p, _Area ustack, _Area kstack, void* entry,
   s[-2] = 0;                 // argv
   s[-3] = 0;                 // argc
   s[-4] = 0;                 // retaddr
+
   s[-5] = 0x00000202;        // eflags
   s[-6] = 8;                 // cs
   s[-7] = (uint32_t) entry;  // eip

@@ -11,7 +11,7 @@ void init_irq(void);
 void init_fs(void);
 uint32_t loader(_Protect*, const char*);
 void load_prog(const char*);
-void _trap();
+void _trap(void);
 
 int main() {
 #ifdef HAS_PTE
