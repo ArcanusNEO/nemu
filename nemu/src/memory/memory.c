@@ -38,7 +38,7 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
     if (!pde.present) {
       Log("Invalid vaddr accessed: 0x%08x", vaddr);
     }
-    // assert(pde.present);
+    assert(pde.present);
     pde.accessed = 1;
 
     PTE* pgtab = (PTE*) (intptr_t) (pde.page_frame << 12);
@@ -46,7 +46,7 @@ paddr_t page_translate(vaddr_t vaddr, bool is_write) {
     if (!pte.present) {
       Log("Invalid vaddr accessed: 0x%08x", vaddr);
     }
-    // assert(pte.present);
+    assert(pte.present);
     pte.accessed = 1;
     if (is_write) pte.dirty = 1;
 
