@@ -13,7 +13,7 @@ uint32_t loader(_Protect*, const char*);
 void load_prog(const char*);
 void _trap(void);
 
-int main() {
+signed main(void) {
 #ifdef HAS_PTE
   init_mm();
 #endif
