@@ -31,6 +31,7 @@ _RegSet* schedule(_RegSet* prev) {
   current->tf = prev;
 
   current = pcb + !!(current == pcb);
+  Log("0x%08x", current);
   // current = pcb;
 
   _switch(&current->as);
