@@ -36,6 +36,7 @@ signed main(void) {
   // ((void (*)(void))entry)();
   // load_prog("/bin/pal");
   load_prog("/bin/hello");
+  load_prog("/bin/text");
 
   _trap();
 
