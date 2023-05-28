@@ -30,14 +30,14 @@ void load_prog(const char* filename) {
 _RegSet* schedule(_RegSet* prev) {
   current->tf = prev;
 
-  { static unsigned i = 0;
-    ++i;
-    if (i <= 99) current = pcb;
-    else current = pcb + 1;
+  // { static unsigned i = 0;
+  //   ++i;
+  //   if (i <= 99) current = pcb;
+  //   else current = pcb + 1;
 
-    if (i > 100) i = 0;
-  }
-  // current = pcb + !!(current == pcb);
+  //   if (i > 100) i = 0;
+  // }
+  current = pcb + !!(current == pcb);
   // Log("0x%08x", current);
   // current = pcb;
 
