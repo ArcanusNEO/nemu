@@ -32,7 +32,7 @@ _RegSet* schedule(_RegSet* prev) {
 
   { static unsigned i = 0;
     ++i;
-    if (i <= 90) current = pcb;
+    if (i <= 99) current = pcb;
     else current = pcb + 1;
 
     if (i > 100) i = 0;
