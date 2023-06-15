@@ -275,15 +275,6 @@ make_DHelper(Ib_G2E) {
   decode_op_I(eip, id_src, true);
 }
 
-/* Ev <- GvCL
- * use for shld/shrd */
-make_DHelper(cl_R2E) {
-  decode_op_rm(eip, id_dest, true, id_src2, true);
-  id_src->type = OP_TYPE_REG;
-  id_src->reg = R_CL;
-  rtl_lr(&id_src->val, R_CL, 1);
-}
-
 make_DHelper(O2a) {
   decode_op_O(eip, id_src, true);
   decode_op_a(eip, id_dest, false);
